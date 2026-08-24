@@ -8,15 +8,42 @@
 
 /* Begin PBXBuildFile section */
 		C00000000000000000000001 /* ShotNDropApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000001 /* ShotNDropApp.swift */; };
-		C00000000000000000000002 /* WatchedFolderAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000002 /* WatchedFolderAccess.swift */; };
-		C00000000000000000000003 /* ScreenshotWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000003 /* ScreenshotWatcher.swift */; };
-		C00000000000000000000004 /* ScreenshotQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000004 /* ScreenshotQueue.swift */; };
-		C00000000000000000000005 /* OverlayPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000005 /* OverlayPanelController.swift */; };
-		C00000000000000000000006 /* OverlayContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000006 /* OverlayContentView.swift */; };
-		C00000000000000000000007 /* FileDragView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000007 /* FileDragView.swift */; };
-		C00000000000000000000009 /* ScreenshotWatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000009 /* ScreenshotWatcherTests.swift */; };
-		C0000000000000000000000A /* ScreenshotQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000A /* ScreenshotQueueTests.swift */; };
-		C0000000000000000000000B /* OverlayPanelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000000B /* OverlayPanelControllerTests.swift */; };
+		C00000000000000000000010 /* ShelfMediaKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000010 /* ShelfMediaKind.swift */; };
+		C00000000000000000000011 /* ShelfMediaPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000011 /* ShelfMediaPayload.swift */; };
+		C00000000000000000000012 /* ShelfInventory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000012 /* ShelfInventory.swift */; };
+		C00000000000000000000013 /* ShelfMediaValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000013 /* ShelfMediaValidator.swift */; };
+		C00000000000000000000014 /* ShelfSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000014 /* ShelfSessionStore.swift */; };
+		C00000000000000000000015 /* ShelfPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000015 /* ShelfPanelController.swift */; };
+		C00000000000000000000016 /* ShelfMenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000016 /* ShelfMenuBarController.swift */; };
+		C00000000000000000000017 /* ShelfSlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000017 /* ShelfSlotView.swift */; };
+		C00000000000000000000018 /* ShelfTrayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000018 /* ShelfTrayView.swift */; };
+		C00000000000000000000019 /* TrayAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000019 /* TrayAnchor.swift */; };
+		C0000000000000000000001A /* PixelDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001A /* PixelDesign.swift */; };
+		C0000000000000000000001B /* CornerBrackets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001B /* CornerBrackets.swift */; };
+		C0000000000000000000001C /* PixelBevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001C /* PixelBevel.swift */; };
+		C0000000000000000000001D /* RunicText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001D /* RunicText.swift */; };
+		C0000000000000000000001E /* PressStart2P-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001E /* PressStart2P-Regular.ttf */; };
+		C0000000000000000000001F /* VT323-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B0000000000000000000001F /* VT323-Regular.ttf */; };
+		C00000000000000000000030 /* Silkscreen-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000030 /* Silkscreen-Regular.ttf */; };
+		C00000000000000000000031 /* Silkscreen-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000031 /* Silkscreen-Bold.ttf */; };
+		C00000000000000000000032 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000032 /* OFL.txt */; };
+		C00000000000000000000033 /* SHASUMS in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000033 /* SHASUMS */; };
+		C00000000000000000000026 /* PixelDesignTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000026 /* PixelDesignTests.swift */; };
+		C00000000000000000000040 /* RelativeAge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000040 /* RelativeAge.swift */; };
+		C00000000000000000000041 /* ShelfThumbnailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000041 /* ShelfThumbnailer.swift */; };
+		C00000000000000000000042 /* RankStripe.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000042 /* RankStripe.swift */; };
+		C00000000000000000000043 /* DragHandleRune.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000043 /* DragHandleRune.swift */; };
+		C00000000000000000000044 /* ShelfTrayHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000044 /* ShelfTrayHeaderView.swift */; };
+		C00000000000000000000045 /* ShelfTrayFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000045 /* ShelfTrayFooterView.swift */; };
+		C00000000000000000000046 /* ShelfTrayRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000046 /* ShelfTrayRowView.swift */; };
+		C00000000000000000000047 /* RelativeAgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000047 /* RelativeAgeTests.swift */; };
+		C00000000000000000000048 /* ShelfThumbnailerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000048 /* ShelfThumbnailerTests.swift */; };
+		C00000000000000000000020 /* ShelfInventoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000020 /* ShelfInventoryTests.swift */; };
+		C00000000000000000000021 /* ShelfMediaValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000021 /* ShelfMediaValidatorTests.swift */; };
+		C00000000000000000000022 /* ShelfSessionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000022 /* ShelfSessionStoreTests.swift */; };
+		C00000000000000000000023 /* ShelfPanelControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000023 /* ShelfPanelControllerTests.swift */; };
+		C00000000000000000000024 /* ShelfMenuBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000024 /* ShelfMenuBarControllerTests.swift */; };
+		C00000000000000000000025 /* TrayAnchorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000025 /* TrayAnchorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,16 +60,43 @@
 		A0000000000000000000000B /* ShotNDrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShotNDrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0000000000000000000000C /* ShotNDropTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShotNDropTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B00000000000000000000001 /* ShotNDropApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotNDropApp.swift; sourceTree = "<group>"; };
-		B00000000000000000000002 /* WatchedFolderAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedFolderAccess.swift; sourceTree = "<group>"; };
-		B00000000000000000000003 /* ScreenshotWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotWatcher.swift; sourceTree = "<group>"; };
-		B00000000000000000000004 /* ScreenshotQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotQueue.swift; sourceTree = "<group>"; };
-		B00000000000000000000005 /* OverlayPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayPanelController.swift; sourceTree = "<group>"; };
-		B00000000000000000000006 /* OverlayContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayContentView.swift; sourceTree = "<group>"; };
-		B00000000000000000000007 /* FileDragView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDragView.swift; sourceTree = "<group>"; };
 		B00000000000000000000008 /* ShotNDrop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShotNDrop.entitlements; sourceTree = "<group>"; };
-		B00000000000000000000009 /* ScreenshotWatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotWatcherTests.swift; sourceTree = "<group>"; };
-		B0000000000000000000000A /* ScreenshotQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotQueueTests.swift; sourceTree = "<group>"; };
-		B0000000000000000000000B /* OverlayPanelControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayPanelControllerTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000010 /* ShelfMediaKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMediaKind.swift; sourceTree = "<group>"; };
+		B00000000000000000000011 /* ShelfMediaPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMediaPayload.swift; sourceTree = "<group>"; };
+		B00000000000000000000012 /* ShelfInventory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfInventory.swift; sourceTree = "<group>"; };
+		B00000000000000000000013 /* ShelfMediaValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMediaValidator.swift; sourceTree = "<group>"; };
+		B00000000000000000000014 /* ShelfSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfSessionStore.swift; sourceTree = "<group>"; };
+		B00000000000000000000015 /* ShelfPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfPanelController.swift; sourceTree = "<group>"; };
+		B00000000000000000000016 /* ShelfMenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMenuBarController.swift; sourceTree = "<group>"; };
+		B00000000000000000000017 /* ShelfSlotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfSlotView.swift; sourceTree = "<group>"; };
+		B00000000000000000000018 /* ShelfTrayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayView.swift; sourceTree = "<group>"; };
+		B00000000000000000000019 /* TrayAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrayAnchor.swift; sourceTree = "<group>"; };
+		B0000000000000000000001A /* PixelDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelDesign.swift; sourceTree = "<group>"; };
+		B0000000000000000000001B /* CornerBrackets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CornerBrackets.swift; sourceTree = "<group>"; };
+		B0000000000000000000001C /* PixelBevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBevel.swift; sourceTree = "<group>"; };
+		B0000000000000000000001D /* RunicText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunicText.swift; sourceTree = "<group>"; };
+		B0000000000000000000001E /* PressStart2P-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PressStart2P-Regular.ttf"; sourceTree = "<group>"; };
+		B0000000000000000000001F /* VT323-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "VT323-Regular.ttf"; sourceTree = "<group>"; };
+		B00000000000000000000030 /* Silkscreen-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Silkscreen-Regular.ttf"; sourceTree = "<group>"; };
+		B00000000000000000000031 /* Silkscreen-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Silkscreen-Bold.ttf"; sourceTree = "<group>"; };
+		B00000000000000000000032 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		B00000000000000000000033 /* SHASUMS */ = {isa = PBXFileReference; lastKnownFileType = text; path = SHASUMS; sourceTree = "<group>"; };
+		B00000000000000000000026 /* PixelDesignTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelDesignTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000040 /* RelativeAge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeAge.swift; sourceTree = "<group>"; };
+		B00000000000000000000041 /* ShelfThumbnailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfThumbnailer.swift; sourceTree = "<group>"; };
+		B00000000000000000000042 /* RankStripe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankStripe.swift; sourceTree = "<group>"; };
+		B00000000000000000000043 /* DragHandleRune.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragHandleRune.swift; sourceTree = "<group>"; };
+		B00000000000000000000044 /* ShelfTrayHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayHeaderView.swift; sourceTree = "<group>"; };
+		B00000000000000000000045 /* ShelfTrayFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayFooterView.swift; sourceTree = "<group>"; };
+		B00000000000000000000046 /* ShelfTrayRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayRowView.swift; sourceTree = "<group>"; };
+		B00000000000000000000047 /* RelativeAgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeAgeTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000048 /* ShelfThumbnailerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfThumbnailerTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000020 /* ShelfInventoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfInventoryTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000021 /* ShelfMediaValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMediaValidatorTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000022 /* ShelfSessionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfSessionStoreTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000023 /* ShelfPanelControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfPanelControllerTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000024 /* ShelfMenuBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMenuBarControllerTests.swift; sourceTree = "<group>"; };
+		B00000000000000000000025 /* TrayAnchorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrayAnchorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +143,7 @@
 				A00000000000000000000005 /* Services */,
 				A00000000000000000000006 /* Models */,
 				A00000000000000000000007 /* UI */,
+				A0000000000000000000001C /* Resources */,
 			);
 			path = ShotNDrop;
 			sourceTree = "<group>";
@@ -96,8 +151,10 @@
 		A00000000000000000000005 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000002 /* WatchedFolderAccess.swift */,
-				B00000000000000000000003 /* ScreenshotWatcher.swift */,
+				B00000000000000000000013 /* ShelfMediaValidator.swift */,
+				B00000000000000000000014 /* ShelfSessionStore.swift */,
+				B00000000000000000000040 /* RelativeAge.swift */,
+				B00000000000000000000041 /* ShelfThumbnailer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -105,7 +162,9 @@
 		A00000000000000000000006 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000004 /* ScreenshotQueue.swift */,
+				B00000000000000000000010 /* ShelfMediaKind.swift */,
+				B00000000000000000000011 /* ShelfMediaPayload.swift */,
+				B00000000000000000000012 /* ShelfInventory.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -113,19 +172,65 @@
 		A00000000000000000000007 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000005 /* OverlayPanelController.swift */,
-				B00000000000000000000006 /* OverlayContentView.swift */,
-				B00000000000000000000007 /* FileDragView.swift */,
+				B00000000000000000000015 /* ShelfPanelController.swift */,
+				B00000000000000000000016 /* ShelfMenuBarController.swift */,
+				B00000000000000000000017 /* ShelfSlotView.swift */,
+				B00000000000000000000018 /* ShelfTrayView.swift */,
+				B00000000000000000000019 /* TrayAnchor.swift */,
+				B00000000000000000000042 /* RankStripe.swift */,
+				B00000000000000000000043 /* DragHandleRune.swift */,
+				B00000000000000000000044 /* ShelfTrayHeaderView.swift */,
+				B00000000000000000000045 /* ShelfTrayFooterView.swift */,
+				B00000000000000000000046 /* ShelfTrayRowView.swift */,
+				A0000000000000000000001B /* Design */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001B /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000001A /* PixelDesign.swift */,
+				B0000000000000000000001B /* CornerBrackets.swift */,
+				B0000000000000000000001C /* PixelBevel.swift */,
+				B0000000000000000000001D /* RunicText.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A0000000000000000000001D /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A0000000000000000000001D /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				B0000000000000000000001E /* PressStart2P-Regular.ttf */,
+				B0000000000000000000001F /* VT323-Regular.ttf */,
+				B00000000000000000000030 /* Silkscreen-Regular.ttf */,
+				B00000000000000000000031 /* Silkscreen-Bold.ttf */,
+				B00000000000000000000032 /* OFL.txt */,
+				B00000000000000000000033 /* SHASUMS */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		A00000000000000000000008 /* ShotNDropTests */ = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000009 /* ScreenshotWatcherTests.swift */,
-				B0000000000000000000000A /* ScreenshotQueueTests.swift */,
-				B0000000000000000000000B /* OverlayPanelControllerTests.swift */,
+				B00000000000000000000020 /* ShelfInventoryTests.swift */,
+				B00000000000000000000021 /* ShelfMediaValidatorTests.swift */,
+				B00000000000000000000022 /* ShelfSessionStoreTests.swift */,
+				B00000000000000000000023 /* ShelfPanelControllerTests.swift */,
+				B00000000000000000000024 /* ShelfMenuBarControllerTests.swift */,
+				B00000000000000000000025 /* TrayAnchorTests.swift */,
+				B00000000000000000000026 /* PixelDesignTests.swift */,
+				B00000000000000000000047 /* RelativeAgeTests.swift */,
+				B00000000000000000000048 /* ShelfThumbnailerTests.swift */,
 			);
 			path = ShotNDropTests;
 			sourceTree = "<group>";
@@ -210,6 +315,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0000000000000000000001E /* PressStart2P-Regular.ttf in Resources */,
+				C0000000000000000000001F /* VT323-Regular.ttf in Resources */,
+				C00000000000000000000030 /* Silkscreen-Regular.ttf in Resources */,
+				C00000000000000000000031 /* Silkscreen-Bold.ttf in Resources */,
+				C00000000000000000000032 /* OFL.txt in Resources */,
+				C00000000000000000000033 /* SHASUMS in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,12 +332,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				C00000000000000000000001 /* ShotNDropApp.swift in Sources */,
-				C00000000000000000000002 /* WatchedFolderAccess.swift in Sources */,
-				C00000000000000000000003 /* ScreenshotWatcher.swift in Sources */,
-				C00000000000000000000004 /* ScreenshotQueue.swift in Sources */,
-				C00000000000000000000005 /* OverlayPanelController.swift in Sources */,
-				C00000000000000000000006 /* OverlayContentView.swift in Sources */,
-				C00000000000000000000007 /* FileDragView.swift in Sources */,
+				C00000000000000000000010 /* ShelfMediaKind.swift in Sources */,
+				C00000000000000000000011 /* ShelfMediaPayload.swift in Sources */,
+				C00000000000000000000012 /* ShelfInventory.swift in Sources */,
+				C00000000000000000000013 /* ShelfMediaValidator.swift in Sources */,
+				C00000000000000000000014 /* ShelfSessionStore.swift in Sources */,
+				C00000000000000000000015 /* ShelfPanelController.swift in Sources */,
+				C00000000000000000000016 /* ShelfMenuBarController.swift in Sources */,
+				C00000000000000000000017 /* ShelfSlotView.swift in Sources */,
+				C00000000000000000000018 /* ShelfTrayView.swift in Sources */,
+				C00000000000000000000019 /* TrayAnchor.swift in Sources */,
+				C0000000000000000000001A /* PixelDesign.swift in Sources */,
+				C0000000000000000000001B /* CornerBrackets.swift in Sources */,
+				C0000000000000000000001C /* PixelBevel.swift in Sources */,
+				C0000000000000000000001D /* RunicText.swift in Sources */,
+				C00000000000000000000040 /* RelativeAge.swift in Sources */,
+				C00000000000000000000041 /* ShelfThumbnailer.swift in Sources */,
+				C00000000000000000000042 /* RankStripe.swift in Sources */,
+				C00000000000000000000043 /* DragHandleRune.swift in Sources */,
+				C00000000000000000000044 /* ShelfTrayHeaderView.swift in Sources */,
+				C00000000000000000000045 /* ShelfTrayFooterView.swift in Sources */,
+				C00000000000000000000046 /* ShelfTrayRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,9 +360,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C00000000000000000000009 /* ScreenshotWatcherTests.swift in Sources */,
-				C0000000000000000000000A /* ScreenshotQueueTests.swift in Sources */,
-				C0000000000000000000000B /* OverlayPanelControllerTests.swift in Sources */,
+				C00000000000000000000026 /* PixelDesignTests.swift in Sources */,
+				C00000000000000000000047 /* RelativeAgeTests.swift in Sources */,
+				C00000000000000000000048 /* ShelfThumbnailerTests.swift in Sources */,
+				C00000000000000000000020 /* ShelfInventoryTests.swift in Sources */,
+				C00000000000000000000021 /* ShelfMediaValidatorTests.swift in Sources */,
+				C00000000000000000000022 /* ShelfSessionStoreTests.swift in Sources */,
+				C00000000000000000000023 /* ShelfPanelControllerTests.swift in Sources */,
+				C00000000000000000000024 /* ShelfMenuBarControllerTests.swift in Sources */,
+				C00000000000000000000025 /* TrayAnchorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
