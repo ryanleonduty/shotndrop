@@ -18,8 +18,32 @@ struct CornerBracketsView: View {
     @EnvironmentObject private var reducedMotion: PixelDesign.ReducedMotion
 
     var body: some View {
+        TimelineView(.animation) { context in
+            let phase = pulsePhase(at: context.date)
+            drawCanvas(pulsePhase: phase)
+        }
+    }
+
+    /// 4-step opacity ramp over `PixelDesign.Motion.ambientPulsePeriod`.
+    /// Reduced Motion pins to 1.0 (steady, no animation).
+    private func pulsePhase(at date: Date) -> Double {
+        guard ambientPulse, !reducedMotion.isReduced else { return 1.0 }
+        let period = PixelDesign.Motion.ambientPulsePeriod
+        let t = date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: period)
+        let step = Int((t / period) * 4) % 4
+        // Stepped opacity: bright → dim → bright → mid
+        switch step {
+        case 0: return 1.00
+        case 1: return 0.55
+        case 2: return 0.90
+        default: return 0.75
+        }
+    }
+
+    @ViewBuilder
+    private func drawCanvas(pulsePhase: Double) -> some View {
         Canvas { context, size in
-            let color = strokeColor(reducedIntensity: false)
+            let color = strokeColor(reducedIntensity: false).opacity(pulsePhase)
             let bracketLen = length
             let offset = self.offset
             let lineWidth: CGFloat = PixelDesign.Geometry.slotBorderWidth
@@ -49,6 +73,7 @@ struct CornerBracketsView: View {
         }
         .allowsHitTesting(false)
     }
+    // Note: end of drawCanvas below is auto-closed by the outer body wrapper.
 
     private var length: CGFloat {
         switch style {

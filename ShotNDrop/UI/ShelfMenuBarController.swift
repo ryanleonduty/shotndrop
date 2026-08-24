@@ -25,12 +25,12 @@ public final class ShelfMenuBarController: NSObject {
         if event?.type == .rightMouseUp {
             presentMenu()
         } else {
-            // Left click toggles the tray.
+            // Left click toggles the expanded inventory.
             guard let panelController else { return }
-            if panelController.isTrayOpen {
-                panelController.dismissTray()
+            if panelController.isExpanded {
+                panelController.collapse()
             } else {
-                panelController.presentTray()
+                panelController.expand()
             }
         }
     }

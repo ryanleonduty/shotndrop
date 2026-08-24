@@ -162,6 +162,9 @@ public enum PixelDesign {
         public static let trayHeaderHeight: CGFloat = 32
         public static let trayFooterHeight: CGFloat = 28
         public static let trayRowHeight: CGFloat = 60
+        /// Compact minimized-state chip.
+        public static let chipWidth: CGFloat = 90
+        public static let chipHeight: CGFloat = 48
     }
 }
 

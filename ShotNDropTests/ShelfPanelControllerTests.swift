@@ -54,15 +54,28 @@ final class ShelfPanelControllerTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
     }
 
-    func testRightClickWithTrayOpenClosesTrayFirst() throws {
+    func testRightClickWhileExpandedCollapsesFirst() throws {
         let store = try ShelfSessionStore(parentDirectory: scratch)
         defer { store.shutdown() }
         let inventory = ShelfInventory()
         let controller = ShelfPanelController(inventory: inventory, sessionStore: store)
         controller.showAtDefaultPosition()
-        controller.presentTray()
-        XCTAssertTrue(controller.isTrayOpen)
+        controller.expand()
+        XCTAssertTrue(controller.isExpanded)
         controller.handleSlotRightClick(at: .zero)
-        XCTAssertFalse(controller.isTrayOpen)
+        XCTAssertFalse(controller.isExpanded)
+    }
+
+    func testSlotClickTogglesExpanded() throws {
+        let store = try ShelfSessionStore(parentDirectory: scratch)
+        defer { store.shutdown() }
+        let inventory = ShelfInventory()
+        let controller = ShelfPanelController(inventory: inventory, sessionStore: store)
+        controller.showAtDefaultPosition()
+        XCTAssertFalse(controller.isExpanded)
+        controller.handleSlotClick()
+        XCTAssertTrue(controller.isExpanded)
+        controller.handleSlotClick()
+        XCTAssertFalse(controller.isExpanded)
     }
 }
