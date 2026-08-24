@@ -16,6 +16,20 @@ public final class ShelfPanelController: NSObject {
     public static let dragHysteresisPoints: CGFloat = 4
     public static let flashDuration: TimeInterval = 0.240
 
+    /// Pasteboard types the drop shelf accepts. The macOS Cmd+Shift+3/4
+    /// floating thumbnail may advertise any subset of these; we take
+    /// whichever it gives us and resolve to a file URL or raw bytes on the
+    /// async copy path.
+    public static let acceptedDraggedTypes: [NSPasteboard.PasteboardType] = [
+        .fileURL,
+        .tiff,
+        .png,
+        NSPasteboard.PasteboardType("com.apple.pasteboard.promised-file-content-type"),
+        NSPasteboard.PasteboardType("com.apple.pasteboard.promised-file-url"),
+        NSPasteboard.PasteboardType("com.apple.NSFilePromiseReceiver"),
+        NSPasteboard.PasteboardType("public.image")
+    ]
+
     public let panel: ShelfPanel
     let hostingView: ShelfHostingView
 
@@ -59,7 +73,7 @@ public final class ShelfPanelController: NSObject {
         self.hostingView = ShelfHostingView(rootView: ShelfSlotView(state: .idleEmpty(count: 0)))
         hostingView.frame = NSRect(x: 0, y: 0, width: 96, height: 96)
         panel.contentView = hostingView
-        panel.registerForDraggedTypes([.fileURL])
+        panel.registerForDraggedTypes(ShelfPanelController.acceptedDraggedTypes)
 
         super.init()
 
@@ -217,11 +231,28 @@ public final class ShelfPanelController: NSObject {
         trayWindow = nil
     }
 
+    /// Grace window before the on-disk bytes are unlinked after a
+    /// drag-out `.copy` ends. Chromium/Electron destinations (Figma) read the
+    /// file asynchronously *after* the drop event fires, so deleting the
+    /// file synchronously on `.copy` races and produces a `FileReader`
+    /// `ProgressEvent` failure on the destination side.
+    public static let consumeDeleteGrace: TimeInterval = 30
+
     private func consumeRow(id: UUID) {
         _ = inventory.remove(id: id)
-        sessionStore.remove(id: id)
         ShelfThumbnailer.shared.invalidate(id: id)
         renderSlot()
+
+        // Physical file removal is deferred by `consumeDeleteGrace` so
+        // async destination readers can still fetch the bytes. Session
+        // teardown (`applicationWillTerminate` → `store.shutdown()`)
+        // removes any files that outlive their grace window.
+        let store = self.sessionStore
+        DispatchQueue.global(qos: .background)
+            .asyncAfter(deadline: .now() + Self.consumeDeleteGrace) {
+                store.remove(id: id)
+            }
+
         if isTrayOpen {
             dismissTray()
             presentTray()
@@ -231,7 +262,10 @@ public final class ShelfPanelController: NSObject {
     // MARK: Drag-in
 
     public func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        let types = sender.draggingPasteboard.types?.map { $0.rawValue } ?? []
+        NSLog("[ShotNDrop] draggingEntered types=%@", types.joined(separator: ","))
         let ok = validator.canAccept(dragInfo: sender)
+        NSLog("[ShotNDrop] canAccept=%@", ok ? "yes" : "no")
         guard ok else { return [] }
         slotState = .dragHover(hadItems: !inventory.isEmpty)
         hostingView.rootView = ShelfSlotView(state: slotState)
@@ -244,17 +278,41 @@ public final class ShelfPanelController: NSObject {
 
     public func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         guard validator.canAccept(dragInfo: sender) else { return false }
-        guard let url = firstFileURL(on: sender.draggingPasteboard) else { return false }
 
-        // Snapshot bytes synchronously before returning — macOS may reap the
-        // source URL immediately after this method returns.
-        let snapshot: Data
-        do {
-            snapshot = try Data(contentsOf: url, options: .mappedIfSafe)
-        } catch {
+        // Try three ingest paths in order: file URL, raw pasteboard bytes,
+        // and file-promise receiver.
+        let pasteboard = sender.draggingPasteboard
+
+        var snapshot: Data?
+        var sourceURL: URL?
+        var utiIdentifier: String = "public.png"
+        var preferredExtension: String = "png"
+        var originalFilename: String = "capture.png"
+
+        if let url = firstFileURL(on: pasteboard) {
+            do {
+                snapshot = try Data(contentsOf: url, options: .mappedIfSafe)
+                sourceURL = url
+                originalFilename = url.lastPathComponent
+                utiIdentifier = (try? url.resourceValues(forKeys: [.contentTypeKey]))?.contentType?.identifier ?? "public.data"
+                preferredExtension = url.pathExtension.isEmpty ? "png" : url.pathExtension
+            } catch {
+                snapshot = nil
+            }
+        }
+
+        if snapshot == nil, let (data, ext, uti) = readRawImageBytes(from: pasteboard) {
+            snapshot = data
+            preferredExtension = ext
+            utiIdentifier = uti
+            originalFilename = "Screenshot.\(ext)"
+        }
+
+        guard let bytes = snapshot else {
             triggerRejection(.unavailable)
             return false
         }
+        _ = sourceURL
 
         guard let pendingID = inventory.reservePending() else {
             triggerRejection(.shelfFull)
@@ -264,20 +322,21 @@ public final class ShelfPanelController: NSObject {
         slotState = .pending(count: inventory.count)
         hostingView.rootView = ShelfSlotView(state: slotState)
 
-        let originalFilename = url.lastPathComponent
         let capturedAt = Date()
-        let uti = (try? url.resourceValues(forKeys: [.contentTypeKey]))?.contentType?.identifier ?? "public.data"
-        let ext = url.pathExtension
+        let uti = utiIdentifier
+        let ext = preferredExtension
+        let originalFilenameBinding = originalFilename
+        let snapshotBytes = bytes
 
         let validator = self.validator
         let store = self.sessionStore
         let existingFingerprints = inventory.fingerprints()
         Task.detached {
             do {
-                let destination = try store.write(bytes: snapshot, id: pendingID, preferredExtension: ext)
+                let destination = try store.write(bytes: snapshotBytes, id: pendingID, preferredExtension: ext)
                 let payload = try validator.finalize(
-                    snapshot: snapshot,
-                    originalFilename: originalFilename,
+                    snapshot: snapshotBytes,
+                    originalFilename: originalFilenameBinding,
                     capturedAt: capturedAt,
                     sessionStoreURL: destination,
                     utiIdentifier: uti,
@@ -315,6 +374,25 @@ public final class ShelfPanelController: NSObject {
             let ext = url.pathExtension.lowercased()
             return ["png", "jpg", "jpeg", "heic", "tif", "tiff", "webp", "gif"].contains(ext)
         }) ?? urls.first
+    }
+
+    /// Reads raw image bytes directly off the pasteboard (macOS's screenshot
+    /// floating thumbnail advertises `public.tiff` and often `public.png`).
+    /// Returns the bytes, a chosen file extension, and the UTI to persist.
+    private func readRawImageBytes(from pasteboard: NSPasteboard) -> (Data, String, String)? {
+        let priorityOrder: [(NSPasteboard.PasteboardType, String, String)] = [
+            (.png, "png", "public.png"),
+            (NSPasteboard.PasteboardType("public.heic"), "heic", "public.heic"),
+            (NSPasteboard.PasteboardType("public.jpeg"), "jpg", "public.jpeg"),
+            (NSPasteboard.PasteboardType("com.compuserve.gif"), "gif", "com.compuserve.gif"),
+            (.tiff, "tiff", "public.tiff")
+        ]
+        for (type, ext, uti) in priorityOrder {
+            if let data = pasteboard.data(forType: type), !data.isEmpty {
+                return (data, ext, uti)
+            }
+        }
+        return nil
     }
 
     private func triggerDropSuccess() {
@@ -360,6 +438,7 @@ final class ShelfHostingView: NSHostingView<ShelfSlotView> {
 
     required init(rootView: ShelfSlotView) {
         super.init(rootView: rootView)
+        registerForDraggedTypes(ShelfPanelController.acceptedDraggedTypes)
     }
 
     @MainActor @available(*, unavailable) required init?(coder: NSCoder) {
@@ -369,7 +448,8 @@ final class ShelfHostingView: NSHostingView<ShelfSlotView> {
     // Ensures the view participates in drag routing.
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
-        window?.registerForDraggedTypes([.fileURL])
+        registerForDraggedTypes(ShelfPanelController.acceptedDraggedTypes)
+        window?.registerForDraggedTypes(ShelfPanelController.acceptedDraggedTypes)
     }
 
     // MARK: Mouse

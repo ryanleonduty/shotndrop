@@ -36,6 +36,7 @@
 		C00000000000000000000044 /* ShelfTrayHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000044 /* ShelfTrayHeaderView.swift */; };
 		C00000000000000000000045 /* ShelfTrayFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000045 /* ShelfTrayFooterView.swift */; };
 		C00000000000000000000046 /* ShelfTrayRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000046 /* ShelfTrayRowView.swift */; };
+		C00000000000000000000050 /* ShelfRowDragView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000050 /* ShelfRowDragView.swift */; };
 		C00000000000000000000047 /* RelativeAgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000047 /* RelativeAgeTests.swift */; };
 		C00000000000000000000048 /* ShelfThumbnailerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000048 /* ShelfThumbnailerTests.swift */; };
 		C00000000000000000000020 /* ShelfInventoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000020 /* ShelfInventoryTests.swift */; };
@@ -89,6 +90,7 @@
 		B00000000000000000000044 /* ShelfTrayHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayHeaderView.swift; sourceTree = "<group>"; };
 		B00000000000000000000045 /* ShelfTrayFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayFooterView.swift; sourceTree = "<group>"; };
 		B00000000000000000000046 /* ShelfTrayRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTrayRowView.swift; sourceTree = "<group>"; };
+		B00000000000000000000050 /* ShelfRowDragView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfRowDragView.swift; sourceTree = "<group>"; };
 		B00000000000000000000047 /* RelativeAgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeAgeTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000048 /* ShelfThumbnailerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfThumbnailerTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000020 /* ShelfInventoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfInventoryTests.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				B00000000000000000000044 /* ShelfTrayHeaderView.swift */,
 				B00000000000000000000045 /* ShelfTrayFooterView.swift */,
 				B00000000000000000000046 /* ShelfTrayRowView.swift */,
+				B00000000000000000000050 /* ShelfRowDragView.swift */,
 				A0000000000000000000001B /* Design */,
 			);
 			path = UI;
@@ -353,6 +356,7 @@
 				C00000000000000000000044 /* ShelfTrayHeaderView.swift in Sources */,
 				C00000000000000000000045 /* ShelfTrayFooterView.swift in Sources */,
 				C00000000000000000000046 /* ShelfTrayRowView.swift in Sources */,
+				C00000000000000000000050 /* ShelfRowDragView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

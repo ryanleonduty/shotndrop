@@ -37,14 +37,42 @@ public struct ShelfMediaValidator: Sendable {
     }
 
     public func canAccept(pasteboard: NSPasteboard) -> Bool {
-        guard let items = pasteboard.pasteboardItems, !items.isEmpty else { return false }
-        for item in items {
-            if let uti = firstAcceptedUTI(on: item) {
-                _ = uti
-                return true
+        // 1) File URL path — an image-typed file on disk.
+        if pasteboardHasAcceptedFileURL(pasteboard) { return true }
+
+        // 2) Raw image bytes — macOS screenshot thumbnail often puts a TIFF
+        //    or PNG directly on the pasteboard even without a file URL.
+        let rawImageTypes: [NSPasteboard.PasteboardType] = [
+            .tiff, .png,
+            NSPasteboard.PasteboardType("public.image"),
+            NSPasteboard.PasteboardType("public.jpeg"),
+            NSPasteboard.PasteboardType("public.heic"),
+            NSPasteboard.PasteboardType("com.compuserve.gif")
+        ]
+        for type in rawImageTypes {
+            if pasteboard.data(forType: type) != nil { return true }
+        }
+
+        // 3) File promise — the source will hand over a file later; accept
+        //    and let performDragOperation resolve it.
+        let promiseTypes: [NSPasteboard.PasteboardType] = [
+            NSPasteboard.PasteboardType("com.apple.pasteboard.promised-file-content-type"),
+            NSPasteboard.PasteboardType("com.apple.pasteboard.promised-file-url"),
+            NSPasteboard.PasteboardType("com.apple.NSFilePromiseReceiver")
+        ]
+        let advertised = pasteboard.types ?? []
+        for type in promiseTypes where advertised.contains(type) {
+            return true
+        }
+        return false
+    }
+
+    private func pasteboardHasAcceptedFileURL(_ pasteboard: NSPasteboard) -> Bool {
+        if let items = pasteboard.pasteboardItems {
+            for item in items {
+                if firstAcceptedUTI(on: item) != nil { return true }
             }
         }
-        // Fallback: some drag sources advertise just a file URL type.
         let types = pasteboard.types ?? []
         if types.contains(.fileURL) {
             if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {

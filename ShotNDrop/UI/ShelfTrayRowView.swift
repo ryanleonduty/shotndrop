@@ -44,19 +44,10 @@ struct ShelfTrayRowView: View {
         .overlay(alignment: .bottom) {
             Rectangle().fill(PixelDesign.Palette.rune2).frame(height: 1)
         }
-        .onDrag {
-            let provider = NSItemProvider()
-            provider.registerFileRepresentation(
-                forTypeIdentifier: payload.utiIdentifier,
-                fileOptions: [.openInPlace],
-                visibility: .all
-            ) { completion in
-                completion(payload.sessionStoreURL, true, nil)
-                DispatchQueue.main.async { onDragConsumed() }
-                return nil
-            }
-            return provider
-        }
+        .overlay(
+            ShelfRowDragOverlay(payload: payload, onDragConsumed: onDragConsumed)
+                .allowsHitTesting(true)
+        )
     }
 
     private var statLine: String {
