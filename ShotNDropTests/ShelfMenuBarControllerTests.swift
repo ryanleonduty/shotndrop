@@ -15,6 +15,6 @@ final class ShelfMenuBarControllerTests: XCTestCase {
         let panel = ShelfPanelController(inventory: inventory, sessionStore: store)
         let menu = ShelfMenuBarController(panelController: panel)
 
-        XCTAssertEqual(menu.menuTitles, ["SHOW SHELF", "CLEAR", "QUIT"])
+        XCTAssertEqual(menu.menuTitles, ["Clear", "Quit"])
     }
 }

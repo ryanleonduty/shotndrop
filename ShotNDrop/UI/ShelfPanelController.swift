@@ -329,11 +329,11 @@ public final class ShelfPanelController: NSObject {
     func handleSlotRightClick(at point: NSPoint) {
         if isExpanded { collapse() }
         let menu = NSMenu()
-        let clearItem = NSMenuItem(title: "CLEAR", action: #selector(clearInventory), keyEquivalent: "")
+        let clearItem = NSMenuItem(title: "Clear", action: #selector(clearInventory), keyEquivalent: "")
         clearItem.target = self
         clearItem.isEnabled = !inventory.isEmpty
         menu.addItem(clearItem)
-        let quitItem = NSMenuItem(title: "QUIT", action: #selector(quitApp), keyEquivalent: "")
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
         quitItem.target = self
         menu.addItem(quitItem)
         menu.popUp(positioning: nil, at: point, in: hostingView)

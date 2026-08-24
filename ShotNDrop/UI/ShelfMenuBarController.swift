@@ -37,24 +37,17 @@ public final class ShelfMenuBarController: NSObject {
 
     private func presentMenu() {
         let menu = NSMenu()
-        let show = NSMenuItem(title: "SHOW SHELF", action: #selector(showShelf), keyEquivalent: "")
-        show.target = self
-        menu.addItem(show)
-        let clear = NSMenuItem(title: "CLEAR", action: #selector(clear), keyEquivalent: "")
+        let clear = NSMenuItem(title: "Clear", action: #selector(clear), keyEquivalent: "")
         clear.target = self
         clear.isEnabled = !(panelController?.inventory.isEmpty ?? true)
         menu.addItem(clear)
-        let quit = NSMenuItem(title: "QUIT", action: #selector(quit), keyEquivalent: "q")
+        let quit = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
 
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
-    }
-
-    @objc private func showShelf() {
-        panelController?.showAtDefaultPosition()
     }
 
     @objc private func clear() {
@@ -68,5 +61,5 @@ public final class ShelfMenuBarController: NSObject {
     }
 
     // Introspection hooks used by tests.
-    public var menuTitles: [String] { ["SHOW SHELF", "CLEAR", "QUIT"] }
+    public var menuTitles: [String] { ["Clear", "Quit"] }
 }
