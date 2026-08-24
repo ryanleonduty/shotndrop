@@ -1,6 +1,8 @@
 import SwiftUI
 import AppKit
 
+/// Vertical inventory tile — thumbnail on top, filename + stats stacked
+/// below. Rank stripe hugs the left edge, drag handle on the right.
 struct ShelfTrayRowView: View {
     let rank: Int
     let payload: ShelfMediaPayload
@@ -8,37 +10,40 @@ struct ShelfTrayRowView: View {
 
     private var thumbnail: NSImage {
         ShelfThumbnailer.shared.thumbnail(for: payload)
-            ?? NSImage(size: NSSize(width: 56, height: 40))
+            ?? NSImage(size: NSSize(width: 120, height: 80))
     }
 
     var body: some View {
         HStack(spacing: 8) {
             RankStripe(rank: rank)
-            Image(nsImage: thumbnail)
-                .resizable()
-                .interpolation(.high)
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 56, height: 40)
-                .clipped()
-                .background(PixelDesign.Palette.rune)
-                .pixelBevel(.idle)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
+                Image(nsImage: thumbnail)
+                    .resizable()
+                    .interpolation(.high)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity, maxHeight: 80)
+                    .background(PixelDesign.Palette.rune)
+                    .pixelBevel(.idle)
+
                 Text(payload.originalFilename)
-                    .font(PixelDesign.Font.face(.body, size: 16))
+                    .font(PixelDesign.Font.face(.body, size: 14))
                     .foregroundColor(PixelDesign.Palette.white)
                     .lineLimit(1)
                     .truncationMode(.middle)
+
                 Text(statLine)
                     .font(PixelDesign.Font.face(.caption, size: 9))
                     .foregroundColor(PixelDesign.Palette.whiteDim)
                     .textCase(.uppercase)
                     .lineLimit(1)
             }
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             DragHandleRune()
         }
         .padding(.horizontal, 8)
+        .padding(.vertical, 6)
         .frame(height: PixelDesign.Geometry.trayRowHeight)
         .background(PixelDesign.Palette.rune)
         .overlay(alignment: .bottom) {

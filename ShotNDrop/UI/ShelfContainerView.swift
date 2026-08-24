@@ -69,7 +69,7 @@ struct ShelfContainerView: View {
                 .font(PixelDesign.Font.face(.caption, size: 10))
                 .foregroundColor(PixelDesign.Palette.whiteDim)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
+                .frame(height: 120)
                 .background(PixelDesign.Palette.midnight)
         } else {
             ScrollView {

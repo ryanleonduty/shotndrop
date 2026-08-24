@@ -34,7 +34,7 @@ final class PixelDesignTests: XCTestCase {
 
     func testGeometryConstants() {
         XCTAssertEqual(PixelDesign.Geometry.slotSize, 96)
-        XCTAssertEqual(PixelDesign.Geometry.trayWidth, 240)
-        XCTAssertEqual(PixelDesign.Geometry.trayRowHeight, 60)
+        XCTAssertEqual(PixelDesign.Geometry.trayWidth, 150)
+        XCTAssertEqual(PixelDesign.Geometry.trayRowHeight, 150)
     }
 }

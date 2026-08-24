@@ -158,10 +158,10 @@ public enum PixelDesign {
         public static let bracketOffsetIdle: CGFloat = 8
         public static let bracketOffsetHover: CGFloat = 12
         public static let bracketLengthHover: CGFloat = 18
-        public static let trayWidth: CGFloat = 240
+        public static let trayWidth: CGFloat = 150
         public static let trayHeaderHeight: CGFloat = 32
-        public static let trayFooterHeight: CGFloat = 28
-        public static let trayRowHeight: CGFloat = 60
+        public static let trayFooterHeight: CGFloat = 44
+        public static let trayRowHeight: CGFloat = 150
         /// Compact minimized-state chip.
         public static let chipWidth: CGFloat = 90
         public static let chipHeight: CGFloat = 48

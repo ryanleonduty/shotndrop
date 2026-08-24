@@ -18,7 +18,7 @@ struct ShelfTrayHeaderView: View {
                     .foregroundColor(stateText.color)
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Text("[ INVENTORY ]")
+                Text("[ INV ]")
                     .font(PixelDesign.Font.face(.display, size: 10))
                     .foregroundColor(labelColor)
                 Spacer()

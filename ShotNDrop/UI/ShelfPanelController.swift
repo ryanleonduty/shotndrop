@@ -50,6 +50,11 @@ public final class ShelfPanelController: NSObject {
     /// Bottom-left origin of the minimized bar. Persisted across expand/
     /// collapse so the bar always returns to the same on-screen position.
     private var barOrigin: NSPoint = .zero
+    /// Which horizontal edge of the chip was anchored to the expanded
+    /// panel — determines how to reverse-map a drag of the expanded panel
+    /// back onto `barOrigin`.
+    private enum HorizontalAnchor { case leading, trailing }
+    private var expandedHorizontalAnchor: HorizontalAnchor = .trailing
     private var outsideClickMonitor: Any?
 
     /// While a drag is hovering, macOS may fire `draggingExited` transiently
@@ -180,7 +185,7 @@ public final class ShelfPanelController: NSObject {
         let count = inventory.readyPayloads.count
         let rows: CGFloat
         if count == 0 {
-            rows = 60 // "EMPTY" label region
+            rows = 120 // "EMPTY" label region — matches ShelfContainerView
         } else {
             let uncapped = CGFloat(count) * PixelDesign.Geometry.trayRowHeight
             rows = min(uncapped, currentMaxTrayRowsHeight())
@@ -202,7 +207,16 @@ public final class ShelfPanelController: NSObject {
         // expanded panel grows leftward from the chip. Fall back to
         // leading if trailing would clip the screen's left edge.
         let trailingX = chipMaxX - expandedWidth
-        let x: CGFloat = trailingX >= screenFrame.minX ? trailingX : barOrigin.x
+        let anchor: HorizontalAnchor
+        let x: CGFloat
+        if trailingX >= screenFrame.minX {
+            x = trailingX
+            anchor = .trailing
+        } else {
+            x = barOrigin.x
+            anchor = .leading
+        }
+        expandedHorizontalAnchor = anchor
 
         // Vertical: prefer below (extend downward from the chip). Fall
         // back to above if below would clip the screen's bottom edge.
@@ -287,10 +301,29 @@ public final class ShelfPanelController: NSObject {
         }
     }
 
-    func handleSlotDragMoved(to origin: NSPoint) {
+    /// Updates the stored chip origin whenever the panel is dragged —
+    /// whether currently minimized or expanded. When expanded, reverses
+    /// the expand math so `barOrigin` matches where the chip would sit if
+    /// we collapsed right now.
+    func handleSlotDragMoved(to panelOrigin: NSPoint) {
         if !isExpanded {
-            barOrigin = origin
+            barOrigin = panelOrigin
+            return
         }
+        let dx: CGFloat
+        switch expandedHorizontalAnchor {
+        case .trailing:
+            dx = PixelDesign.Geometry.trayWidth - Self.minimizedWidth
+        case .leading:
+            dx = 0
+        }
+        let dy: CGFloat
+        switch mode {
+        case .expandedBelow: dy = computedBodyHeight()
+        case .expandedAbove: dy = 0
+        case .minimized: dy = 0
+        }
+        barOrigin = NSPoint(x: panelOrigin.x + dx, y: panelOrigin.y + dy)
     }
 
     func handleSlotRightClick(at point: NSPoint) {
