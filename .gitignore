@@ -24,3 +24,7 @@ Package.resolved
 *.provisionprofile
 *.mobileprovision
 ExportOptions.plist
+
+## Local planning notes
+plans/
+docs/
