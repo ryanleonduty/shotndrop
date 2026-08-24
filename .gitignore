@@ -30,3 +30,7 @@ ExportOptions.plist
 ## Local planning notes
 plans/
 docs/
+
+## Local agent tooling
+.agentkit/
+.claude/
