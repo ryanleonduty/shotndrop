@@ -13,6 +13,7 @@
 		C00000000000000000000012 /* ShelfInventory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000012 /* ShelfInventory.swift */; };
 		C00000000000000000000013 /* ShelfMediaValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000013 /* ShelfMediaValidator.swift */; };
 		C00000000000000000000014 /* ShelfSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000014 /* ShelfSessionStore.swift */; };
+C00000000000000000000053 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000053 /* UpdateChecker.swift */; };
 		C00000000000000000000015 /* ShelfPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000015 /* ShelfPanelController.swift */; };
 		C00000000000000000000016 /* ShelfMenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000016 /* ShelfMenuBarController.swift */; };
 		C00000000000000000000017 /* ShelfSlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000017 /* ShelfSlotView.swift */; };
@@ -28,6 +29,7 @@
 		C00000000000000000000031 /* Silkscreen-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000031 /* Silkscreen-Bold.ttf */; };
 		C00000000000000000000032 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000032 /* OFL.txt */; };
 		C00000000000000000000033 /* SHASUMS in Resources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000033 /* SHASUMS */; };
+C00000000000000000000027 /* UpdateCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000027 /* UpdateCheckerTests.swift */; };
 		C00000000000000000000026 /* PixelDesignTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000026 /* PixelDesignTests.swift */; };
 		C00000000000000000000040 /* RelativeAge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000040 /* RelativeAge.swift */; };
 		C00000000000000000000041 /* ShelfThumbnailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00000000000000000000041 /* ShelfThumbnailer.swift */; };
@@ -85,6 +87,7 @@
 		B00000000000000000000032 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		B00000000000000000000033 /* SHASUMS */ = {isa = PBXFileReference; lastKnownFileType = text; path = SHASUMS; sourceTree = "<group>"; };
 		B00000000000000000000026 /* PixelDesignTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelDesignTests.swift; sourceTree = "<group>"; };
+B00000000000000000000053 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		B00000000000000000000040 /* RelativeAge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeAge.swift; sourceTree = "<group>"; };
 		B00000000000000000000041 /* ShelfThumbnailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfThumbnailer.swift; sourceTree = "<group>"; };
 		B00000000000000000000042 /* RankStripe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankStripe.swift; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 		B00000000000000000000051 /* ShelfContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfContainerView.swift; sourceTree = "<group>"; };
 		B00000000000000000000052 /* ShelfChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfChipView.swift; sourceTree = "<group>"; };
 		B00000000000000000000047 /* RelativeAgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeAgeTests.swift; sourceTree = "<group>"; };
+B00000000000000000000027 /* UpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheckerTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000048 /* ShelfThumbnailerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfThumbnailerTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000020 /* ShelfInventoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfInventoryTests.swift; sourceTree = "<group>"; };
 		B00000000000000000000021 /* ShelfMediaValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfMediaValidatorTests.swift; sourceTree = "<group>"; };
@@ -161,6 +165,7 @@
 				B00000000000000000000014 /* ShelfSessionStore.swift */,
 				B00000000000000000000040 /* RelativeAge.swift */,
 				B00000000000000000000041 /* ShelfThumbnailer.swift */,
+				B00000000000000000000053 /* UpdateChecker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -240,6 +245,7 @@
 				B00000000000000000000026 /* PixelDesignTests.swift */,
 				B00000000000000000000047 /* RelativeAgeTests.swift */,
 				B00000000000000000000048 /* ShelfThumbnailerTests.swift */,
+				B00000000000000000000027 /* UpdateCheckerTests.swift */,
 			);
 			path = ShotNDropTests;
 			sourceTree = "<group>";
@@ -356,6 +362,7 @@
 				C0000000000000000000001C /* PixelBevel.swift in Sources */,
 				C0000000000000000000001D /* RunicText.swift in Sources */,
 				C00000000000000000000040 /* RelativeAge.swift in Sources */,
+				C00000000000000000000053 /* UpdateChecker.swift in Sources */,
 				C00000000000000000000041 /* ShelfThumbnailer.swift in Sources */,
 				C00000000000000000000042 /* RankStripe.swift in Sources */,
 				C00000000000000000000043 /* DragHandleRune.swift in Sources */,
@@ -381,6 +388,7 @@
 				C00000000000000000000023 /* ShelfPanelControllerTests.swift in Sources */,
 				C00000000000000000000024 /* ShelfMenuBarControllerTests.swift in Sources */,
 				C00000000000000000000025 /* TrayAnchorTests.swift in Sources */,
+				C00000000000000000000027 /* UpdateCheckerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,7 +529,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShotNDrop/ShotNDrop.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ShotNDrop;
@@ -531,7 +539,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotndrop.ShotNDrop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -544,7 +552,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShotNDrop/ShotNDrop.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ShotNDrop;
@@ -554,7 +562,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.shotndrop.ShotNDrop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

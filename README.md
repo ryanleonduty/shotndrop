@@ -22,6 +22,7 @@ Most of the files I take screenshots of, or briefly download to attach somewhere
 - Drag source that works in Slack, Figma, Notion, Mail, Discord, browsers, and most apps that accept file drops.
 - Menu bar only, no Dock icon. A pixel chip when idle; a vertical tray when expanded.
 - Session-only storage. Quit ends the session and clears the shelf.
+- Manual update check from either the menu bar or shelf context menu.
 
 ## Install
 
@@ -48,9 +49,9 @@ Requires Xcode 15+.
 ## Using it
 
 1. Launch. A chip appears near your menu bar.
-2. Drop a file in; the chip expands into a tray showing what you've stashed.
+2. Drop a file in; the chip expands into a tray showing what you’ve stashed.
 3. Drag any item back out into another app.
-4. Menu bar icon → **Clear** empties the shelf; **Quit** ends the session.
+4. Menu bar icon → **Clear**, **Check for Updates**, or **Quit**.
 
 ## FAQ
 

@@ -1,16 +1,21 @@
 import AppKit
 import Combine
 /// Owns the menu-bar `NSStatusItem` and its three-item menu:
-/// `SHOW SHELF`, `CLEAR`, `QUIT`. Clicking the status icon toggles the tray.
+/// `CLEAR`, `CHECK FOR UPDATES`, `QUIT`. Clicking the status icon toggles the tray.
 @MainActor
 public final class ShelfMenuBarController: NSObject {
     private let statusItem: NSStatusItem
     private weak var panelController: ShelfPanelController?
+    private let updateCoordinator: UpdateCoordinator
     private var inventoryObservation: AnyCancellable?
 
-    public init(panelController: ShelfPanelController) {
+    public init(
+        panelController: ShelfPanelController,
+        updateCoordinator: UpdateCoordinator = UpdateCoordinator()
+    ) {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.panelController = panelController
+        self.updateCoordinator = updateCoordinator
         super.init()
 
         if let button = statusItem.button {
@@ -86,16 +91,35 @@ public final class ShelfMenuBarController: NSObject {
     private func presentMenu() {
         let menu = NSMenu()
         let clear = NSMenuItem(title: "Clear", action: #selector(clear), keyEquivalent: "")
+        clear.image = NSImage(systemSymbolName: "trash", accessibilityDescription: "Clear")
         clear.target = self
         clear.isEnabled = !(panelController?.inventory.isEmpty ?? true)
         menu.addItem(clear)
+
+        let checkForUpdates = NSMenuItem(
+            title: "Check for Updates",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        checkForUpdates.image = NSImage(
+            systemSymbolName: "arrow.clockwise",
+            accessibilityDescription: "Check for Updates"
+        )
+        checkForUpdates.target = self
+        menu.addItem(checkForUpdates)
+
         let quit = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
+        quit.image = NSImage(systemSymbolName: "power", accessibilityDescription: "Quit")
         quit.target = self
         menu.addItem(quit)
 
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
+    }
+
+    @objc private func checkForUpdates() {
+        updateCoordinator.checkForUpdates(from: panelController?.panel)
     }
 
     @objc private func clear() {
@@ -109,5 +133,5 @@ public final class ShelfMenuBarController: NSObject {
     }
 
     // Introspection hooks used by tests.
-    public var menuTitles: [String] { ["Clear", "Quit"] }
+    public var menuTitles: [String] { ["Clear", "Check for Updates", "Quit"] }
 }

@@ -59,7 +59,7 @@ public final class ShelfPanelController: NSObject {
     public let inventory: ShelfInventory
     public let sessionStore: ShelfSessionStore
     public let validator: ShelfMediaValidator
-
+    private let updateCoordinator: UpdateCoordinator
     private var slotState: ShelfSlotView.State
     private var mode: ShelfContainerView.Mode = .minimized
     private var autoExpandedFromHover: Bool = false
@@ -79,15 +79,16 @@ public final class ShelfPanelController: NSObject {
     /// `draggingEntered` re-fires within the debounce window.
     private var pendingHoverCollapse: DispatchWorkItem?
     private static let hoverExitDebounce: TimeInterval = 0.15
-
     public init(
         inventory: ShelfInventory,
         sessionStore: ShelfSessionStore,
-        validator: ShelfMediaValidator = ShelfMediaValidator()
+        validator: ShelfMediaValidator = ShelfMediaValidator(),
+        updateCoordinator: UpdateCoordinator = UpdateCoordinator()
     ) {
         self.inventory = inventory
         self.sessionStore = sessionStore
         self.validator = validator
+        self.updateCoordinator = updateCoordinator
         self.slotState = .idleEmpty(count: 0)
 
         let panel = ShelfPanel(
@@ -461,13 +462,30 @@ public final class ShelfPanelController: NSObject {
         if isExpanded { collapse() }
         let menu = NSMenu()
         let clearItem = NSMenuItem(title: "Clear", action: #selector(clearInventory), keyEquivalent: "")
+        clearItem.image = NSImage(systemSymbolName: "trash", accessibilityDescription: "Clear")
         clearItem.target = self
         clearItem.isEnabled = !inventory.isEmpty
         menu.addItem(clearItem)
+        let checkForUpdatesItem = NSMenuItem(
+            title: "Check for Updates",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
+        )
+        checkForUpdatesItem.image = NSImage(
+            systemSymbolName: "arrow.clockwise",
+            accessibilityDescription: "Check for Updates"
+        )
+        checkForUpdatesItem.target = self
+        menu.addItem(checkForUpdatesItem)
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
+        quitItem.image = NSImage(systemSymbolName: "power", accessibilityDescription: "Quit")
         quitItem.target = self
         menu.addItem(quitItem)
         menu.popUp(positioning: nil, at: point, in: hostingView)
+    }
+
+    @objc private func checkForUpdates() {
+        updateCoordinator.checkForUpdates(from: panel)
     }
 
     @objc private func clearInventory() {

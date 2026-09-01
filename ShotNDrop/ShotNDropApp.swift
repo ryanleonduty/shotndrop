@@ -16,6 +16,7 @@ final class ShotNDropAppDelegate: NSObject, NSApplicationDelegate {
     private var inventory: ShelfInventory?
     private var panelController: ShelfPanelController?
     private var menuBarController: ShelfMenuBarController?
+    private let updateCoordinator = UpdateCoordinator()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -24,8 +25,15 @@ final class ShotNDropAppDelegate: NSObject, NSApplicationDelegate {
         do {
             let store = try ShelfSessionStore()
             let inventory = ShelfInventory()
-            let panel = ShelfPanelController(inventory: inventory, sessionStore: store)
-            let menu = ShelfMenuBarController(panelController: panel)
+            let panel = ShelfPanelController(
+                inventory: inventory,
+                sessionStore: store,
+                updateCoordinator: updateCoordinator
+            )
+            let menu = ShelfMenuBarController(
+                panelController: panel,
+                updateCoordinator: updateCoordinator
+            )
 
             self.sessionStore = store
             self.inventory = inventory
