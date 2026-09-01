@@ -44,6 +44,25 @@ final class ShelfPanelControllerTests: XCTestCase {
         XCTAssertEqual(origin, NSPoint(x: 300, y: 80))
     }
 
+    func testDraggedOriginKeepsPanelWithinScreenBounds() {
+        let screen = NSRect(x: 100, y: 200, width: 800, height: 600)
+        let size = NSSize(width: 120, height: 300)
+
+        let topLeft = ShelfPanelController.clampedOrigin(
+            NSPoint(x: -500, y: 999),
+            panelSize: size,
+            screenFrame: screen
+        )
+        let bottomRight = ShelfPanelController.clampedOrigin(
+            NSPoint(x: 999, y: -500),
+            panelSize: size,
+            screenFrame: screen
+        )
+
+        XCTAssertEqual(topLeft, NSPoint(x: 100, y: 500))
+        XCTAssertEqual(bottomRight, NSPoint(x: 780, y: 200))
+    }
+
 
     func testMinimizedChipUsesGenericDropLabelDuringHover() {
         XCTAssertEqual(

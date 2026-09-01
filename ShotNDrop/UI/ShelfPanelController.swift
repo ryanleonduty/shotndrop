@@ -30,6 +30,19 @@ public final class ShelfPanelController: NSObject {
     /// drop event fires, so synchronous delete races and produces
     /// `FileReader` `ProgressEvent` failures.
     public static let consumeDeleteGrace: TimeInterval = 30
+    /// Keeps the floating panel fully visible while it is dragged.
+    static func clampedOrigin(
+        _ origin: NSPoint,
+        panelSize: NSSize,
+        screenFrame: NSRect
+    ) -> NSPoint {
+        let maximumX = max(screenFrame.minX, screenFrame.maxX - panelSize.width)
+        let maximumY = max(screenFrame.minY, screenFrame.maxY - panelSize.height)
+        return NSPoint(
+            x: min(max(origin.x, screenFrame.minX), maximumX),
+            y: min(max(origin.y, screenFrame.minY), maximumY)
+        )
+    }
 
     /// Minimized dimensions — the compact pixel chip. Smaller than the
     /// expanded tray; the controller shifts the panel's horizontal origin
@@ -661,9 +674,18 @@ final class ShelfHostingView: NSHostingView<ShelfContainerView> {
         }
         if didExceedThreshold {
             let mouseGlobal = NSEvent.mouseLocation
-            let newOrigin = NSPoint(
+            let proposedOrigin = NSPoint(
                 x: mouseGlobal.x - start.x,
                 y: mouseGlobal.y - start.y
+            )
+            let screenFrame = NSScreen.screens.first { $0.frame.contains(mouseGlobal) }?.visibleFrame
+                ?? window.screen?.visibleFrame
+                ?? NSScreen.main?.visibleFrame
+                ?? NSRect(origin: proposedOrigin, size: window.frame.size)
+            let newOrigin = ShelfPanelController.clampedOrigin(
+                proposedOrigin,
+                panelSize: window.frame.size,
+                screenFrame: screenFrame
             )
             window.setFrameOrigin(newOrigin)
             controller?.handleSlotDragMoved(to: newOrigin)
@@ -677,6 +699,7 @@ final class ShelfHostingView: NSHostingView<ShelfContainerView> {
         if !didExceedThreshold {
             controller?.handleSlotClick()
         }
+        didExceedThreshold = false
     }
 
     override func rightMouseDown(with event: NSEvent) {
