@@ -14,19 +14,25 @@ struct ShelfChipView: View {
         ZStack {
             background
                 .transition(.opacity)
-            HStack(spacing: 6) {
-                Text("[")
-                    .font(PixelDesign.Font.face(.display, size: 15))
-                    .foregroundColor(labelColor)
-                Text("\(count)")
-                    .font(PixelDesign.Font.face(.body, size: 24))
-                    .foregroundColor(countColor)
-                    .contentTransition(.numericText())
-                Text("]")
-                    .font(PixelDesign.Font.face(.display, size: 15))
-                    .foregroundColor(labelColor)
+            if let stateLabel = Self.stateLabel(for: slotState) {
+                Text(stateLabel)
+                    .font(PixelDesign.Font.face(.display, size: 9))
+                    .foregroundColor(PixelDesign.Palette.cyan)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                HStack(spacing: 6) {
+                    Text("[")
+                        .font(PixelDesign.Font.face(.display, size: 15))
+                        .foregroundColor(labelColor)
+                    Text("\(count)")
+                        .font(PixelDesign.Font.face(.body, size: 24))
+                        .foregroundColor(countColor)
+                        .contentTransition(.numericText())
+                    Text("]")
+                        .font(PixelDesign.Font.face(.display, size: 15))
+                        .foregroundColor(labelColor)
+                }
             }
-            overlayLabel
         }
         .frame(width: PixelDesign.Geometry.chipWidth,
                height: PixelDesign.Geometry.chipHeight)
@@ -36,6 +42,13 @@ struct ShelfChipView: View {
         )
         .animation(.easeInOut(duration: 0.35), value: slotState)
         .animation(.easeInOut(duration: 0.20), value: count)
+    }
+
+    static func stateLabel(for state: ShelfSlotView.State) -> String? {
+        if case .dragHover = state {
+            return "DROP ITEM"
+        }
+        return nil
     }
 
     private var background: some View {

@@ -1,4 +1,5 @@
 import XCTest
+import AppKit
 @testable import ShotNDrop
 
 @MainActor
@@ -24,6 +25,37 @@ final class ShelfPanelControllerTests: XCTestCase {
         XCTAssertTrue(controller.panel.isVisible)
     }
 
+    func testDownwardFrameCapsBodyWithoutMovingChipOrigin() {
+        let origin = NSPoint(x: 300, y: 80)
+        let screen = NSRect(x: 0, y: 0, width: 500, height: 900)
+        let result = ShelfPanelController.downwardExpandedFrame(
+            barOrigin: origin,
+            horizontalOrigin: 250,
+            screenFrame: screen,
+            bodyHeight: 700,
+            expandedWidth: 150,
+            minimizedHeight: 48
+        )
+
+        XCTAssertEqual(result.mode, .expandedBelow)
+        XCTAssertEqual(result.frame.minY, screen.minY)
+        XCTAssertEqual(result.frame.maxY, origin.y + 48)
+        XCTAssertTrue(screen.contains(result.frame))
+        XCTAssertEqual(origin, NSPoint(x: 300, y: 80))
+    }
+
+
+    func testMinimizedChipUsesGenericDropLabelDuringHover() {
+        XCTAssertEqual(
+            ShelfChipView.stateLabel(for: .dragHover(hadItems: false)),
+            "DROP ITEM"
+        )
+        XCTAssertEqual(
+            ShelfChipView.stateLabel(for: .dragHover(hadItems: true)),
+            "DROP ITEM"
+        )
+        XCTAssertNil(ShelfChipView.stateLabel(for: .idleEmpty(count: 3)))
+    }
     func testConsumeCallsInventoryRemoveAndStoreRemove() throws {
         let store = try ShelfSessionStore(parentDirectory: scratch)
         defer { store.shutdown() }
@@ -63,6 +95,32 @@ final class ShelfPanelControllerTests: XCTestCase {
         controller.expand()
         XCTAssertTrue(controller.isExpanded)
         controller.handleSlotRightClick(at: .zero)
+        XCTAssertFalse(controller.isExpanded)
+    }
+
+    func testEscapeKeyCollapsesExpandedPanel() throws {
+        let store = try ShelfSessionStore(parentDirectory: scratch)
+        defer { store.shutdown() }
+        let inventory = ShelfInventory()
+        let controller = ShelfPanelController(inventory: inventory, sessionStore: store)
+        controller.showAtDefaultPosition()
+        controller.expand()
+        XCTAssertTrue(controller.isExpanded)
+
+        let event = try XCTUnwrap(NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0,
+            windowNumber: controller.panel.windowNumber,
+            context: nil,
+            characters: "\u{1b}",
+            charactersIgnoringModifiers: "\u{1b}",
+            isARepeat: false,
+            keyCode: 53
+        ))
+        controller.panel.keyDown(with: event)
+
         XCTAssertFalse(controller.isExpanded)
     }
 

@@ -1,11 +1,12 @@
 import AppKit
-
+import Combine
 /// Owns the menu-bar `NSStatusItem` and its three-item menu:
 /// `SHOW SHELF`, `CLEAR`, `QUIT`. Clicking the status icon toggles the tray.
 @MainActor
 public final class ShelfMenuBarController: NSObject {
     private let statusItem: NSStatusItem
     private weak var panelController: ShelfPanelController?
+    private var inventoryObservation: AnyCancellable?
 
     public init(panelController: ShelfPanelController) {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -13,11 +14,58 @@ public final class ShelfMenuBarController: NSObject {
         super.init()
 
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "photo.on.rectangle.angled", accessibilityDescription: "ShotNDrop")
+            button.image = Self.statusIcon(isOccupied: !panelController.inventory.isEmpty)
+            button.imageScaling = .scaleProportionallyDown
             button.target = self
             button.action = #selector(statusItemClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
+
+        inventoryObservation = panelController.inventory.didChange.sink { [weak self] in
+            self?.updateStatusIcon()
+        }
+    }
+
+    private func updateStatusIcon() {
+        statusItem.button?.image = Self.statusIcon(isOccupied: !(panelController?.inventory.isEmpty ?? true))
+    }
+
+    /// Draws a small, template-style pixel tray without a bitmap asset.
+    /// The occupied form adds two stacked cards; the empty form leaves the
+    /// tray visibly open while preserving the same monochrome silhouette.
+    private static func statusIcon(isOccupied: Bool) -> NSImage {
+        let iconSize = NSSize(width: 18, height: 18)
+        let image = NSImage(size: iconSize)
+        image.isTemplate = true
+        image.accessibilityDescription = "ShotNDrop"
+        image.lockFocus()
+        defer { image.unlockFocus() }
+
+        NSGraphicsContext.current?.imageInterpolation = .none
+        NSColor.white.setFill()
+
+        func pixel(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) {
+            NSRect(x: x, y: y, width: width, height: height).fill()
+        }
+
+        // Open-top tray: chunky side walls, floor, and front lip.
+        pixel(2, 3, 2, 9)
+        pixel(14, 3, 2, 9)
+        pixel(3, 2, 12, 2)
+        pixel(4, 11, 10, 2)
+        pixel(3, 4, 12, 2)
+
+        if isOccupied {
+            // Two offset cards make inventory presence legible at 1x.
+            pixel(5, 8, 8, 5)
+            pixel(4, 6, 10, 2)
+            pixel(3, 5, 10, 2)
+        } else {
+            // A single inset floor mark keeps the empty state distinct.
+            pixel(6, 6, 6, 1)
+        }
+
+        return image
     }
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {

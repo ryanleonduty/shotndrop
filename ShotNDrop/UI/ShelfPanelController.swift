@@ -190,17 +190,40 @@ public final class ShelfPanelController: NSObject {
             let uncapped = CGFloat(count) * PixelDesign.Geometry.trayRowHeight
             rows = min(uncapped, currentMaxTrayRowsHeight())
         }
-        return rows + PixelDesign.Geometry.trayFooterHeight
+
+        // Keep the minimized chip's origin stable. The body can scroll when
+        // the available space below the chip is smaller than the inventory.
+        let screenFrame = panel.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
+        let availableBelow = max(0, barOrigin.y - screenFrame.minY)
+        let visibleRows = min(rows, max(0, availableBelow - PixelDesign.Geometry.trayFooterHeight))
+        return visibleRows + PixelDesign.Geometry.trayFooterHeight
     }
 
     /// Resolves the expanded panel's frame + direction.
     /// The expanded panel is `trayWidth` wide, so it's larger than the
     /// minimized chip; horizontal origin shifts so the expanded panel stays
     /// on the same screen side as the chip.
+    static func downwardExpandedFrame(
+        barOrigin: NSPoint,
+        horizontalOrigin: CGFloat,
+        screenFrame: NSRect,
+        bodyHeight: CGFloat,
+        expandedWidth: CGFloat,
+        minimizedHeight: CGFloat
+    ) -> (frame: NSRect, mode: ShelfContainerView.Mode) {
+        let availableBelow = max(0, barOrigin.y - screenFrame.minY)
+        let visibleBodyHeight = min(bodyHeight, availableBelow)
+        let frame = NSRect(
+            x: horizontalOrigin,
+            y: barOrigin.y - visibleBodyHeight,
+            width: expandedWidth,
+            height: minimizedHeight + visibleBodyHeight
+        )
+        return (frame, .expandedBelow)
+    }
     private func resolveExpandedFrame(bodyHeight: CGFloat) -> (frame: NSRect, mode: ShelfContainerView.Mode) {
         let screenFrame = panel.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
         let expandedWidth = PixelDesign.Geometry.trayWidth
-        let expandedHeight = Self.minimizedHeight + bodyHeight
         let chipMaxX = barOrigin.x + Self.minimizedWidth
 
         // Horizontal: prefer trailing (chip.maxX == expanded.maxX) so the
@@ -218,20 +241,16 @@ public final class ShelfPanelController: NSObject {
         }
         expandedHorizontalAnchor = anchor
 
-        // Vertical: prefer below (extend downward from the chip). Fall
-        // back to above if below would clip the screen's bottom edge.
-        let belowFrame = NSRect(x: x,
-                                y: barOrigin.y - bodyHeight,
-                                width: expandedWidth,
-                                height: expandedHeight)
-        let aboveFrame = NSRect(x: x,
-                                y: barOrigin.y,
-                                width: expandedWidth,
-                                height: expandedHeight)
-        if screenFrame.contains(belowFrame) {
-            return (belowFrame, .expandedBelow)
-        }
-        return (aboveFrame, .expandedAbove)
+        // Always open downward. The helper caps the body if the chip is near
+        // the bottom edge without mutating the minimized chip's origin.
+        return Self.downwardExpandedFrame(
+            barOrigin: barOrigin,
+            horizontalOrigin: x,
+            screenFrame: screenFrame,
+            bodyHeight: bodyHeight,
+            expandedWidth: expandedWidth,
+            minimizedHeight: Self.minimizedHeight
+        )
     }
 
     /// Panel resize animation duration for click-driven expand/collapse
@@ -240,13 +259,16 @@ public final class ShelfPanelController: NSObject {
     private static let frameAnimationDuration: TimeInterval = 0.18
 
     /// Expand the panel to include the tray body in-place.
-    public func expand(animated: Bool = true) {
+    public func expand(animated: Bool = true, makeKey: Bool = true) {
         guard !isExpanded else { return }
         let bodyHeight = computedBodyHeight()
         let (newFrame, direction) = resolveExpandedFrame(bodyHeight: bodyHeight)
         mode = direction
         setPanelFrame(newFrame, animated: animated)
         renderContainer()
+        if makeKey {
+            panel.makeKey()
+        }
         installOutsideClickMonitor()
     }
 
@@ -396,7 +418,7 @@ public final class ShelfPanelController: NSObject {
         slotState = .dragHover(hadItems: !inventory.isEmpty)
         if !isExpanded {
             autoExpandedFromHover = true
-            expand(animated: false)  // snap during drag to avoid jitter
+            expand(animated: false, makeKey: false)  // snap during drag to avoid jitter
         } else {
             renderContainer()
         }
@@ -585,6 +607,14 @@ public final class ShelfPanel: NSPanel {
     weak var controller: ShelfPanelController?
     public override var canBecomeKey: Bool { true }
     public override var canBecomeMain: Bool { false }
+
+    public override func keyDown(with event: NSEvent) {
+        if event.keyCode == 53 {
+            controller?.collapse()
+            return
+        }
+        super.keyDown(with: event)
+    }
 }
 
 /// Hosting view that owns:
