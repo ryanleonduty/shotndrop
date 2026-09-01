@@ -63,6 +63,166 @@ final class ShelfPanelControllerTests: XCTestCase {
         XCTAssertEqual(bottomRight, NSPoint(x: 780, y: 200))
     }
 
+    func testOversizedPanelClampsToVisibleTopAndRightEdges() {
+        let screen = NSRect(x: 100, y: 200, width: 800, height: 600)
+        let result = ShelfPanelController.clampedOrigin(
+            NSPoint(x: 0, y: 0),
+            panelSize: NSSize(width: 1_000, height: 900),
+            screenFrame: screen
+        )
+
+        XCTAssertEqual(result.x, -100)
+        XCTAssertEqual(result.y, -100)
+        XCTAssertEqual(result.x + 1_000, screen.maxX)
+        XCTAssertEqual(result.y + 900, screen.maxY)
+    }
+
+    func testDragAnchorProjectionPreservesTopEdgeWhenTrayResizesEitherDirection() {
+        XCTAssertEqual(
+            ShelfPanelController.dragAnchorYAdjustment(
+                oldHeight: 800,
+                targetHeight: 240,
+                anchorsTopEdge: true
+            ),
+            560
+        )
+        XCTAssertEqual(
+            ShelfPanelController.dragAnchorYAdjustment(
+                oldHeight: 240,
+                targetHeight: 800,
+                anchorsTopEdge: true
+            ),
+            -560
+        )
+        XCTAssertEqual(
+            ShelfPanelController.dragAnchorYAdjustment(
+                oldHeight: 800,
+                targetHeight: 240,
+                anchorsTopEdge: false
+            ),
+            0
+        )
+    }
+
+    func testProjectedDragOriginUsesTargetSizeOnVerticallyOffsetDisplay() {
+        let result = ShelfPanelController.projectedDragOrigin(
+            mouseGlobal: NSPoint(x: 500, y: -100),
+            localAnchor: NSPoint(x: 50, y: 700),
+            oldPanelSize: NSSize(width: 150, height: 800),
+            targetPanelSize: NSSize(width: 150, height: 240),
+            screenFrame: NSRect(x: 0, y: -300, width: 800, height: 400),
+            anchorsTopEdge: true
+        )
+
+        XCTAssertEqual(result, NSPoint(x: 450, y: -240))
+    }
+
+    func testFractionalDragProjectionDoesNotAccumulateIntegerFrameRounding() {
+        let screen = NSRect(x: 0, y: 0, width: 1_500, height: 900)
+        let anchor = NSPoint(x: 23.969, y: 38.590)
+        let panelSize = NSSize(width: 90, height: 48)
+        var simulatedFrameOrigin = NSPoint(x: 1_000, y: 400)
+
+        for index in 0..<40 {
+            let mouse = NSPoint(
+                x: 1_000 + anchor.x + CGFloat(index) * 1.37,
+                y: 400 + anchor.y + CGFloat(index) * 0.83
+            )
+            let projected = ShelfPanelController.projectedDragOrigin(
+                mouseGlobal: mouse,
+                localAnchor: anchor,
+                oldPanelSize: panelSize,
+                targetPanelSize: panelSize,
+                screenFrame: screen,
+                anchorsTopEdge: false
+            )
+            XCTAssertEqual(projected.x, 1_000 + CGFloat(index) * 1.37, accuracy: 0.001)
+            XCTAssertEqual(projected.y, 400 + CGFloat(index) * 0.83, accuracy: 0.001)
+            simulatedFrameOrigin = NSPoint(x: projected.x.rounded(), y: projected.y.rounded())
+        }
+
+        XCTAssertEqual(simulatedFrameOrigin.x, 1_053, accuracy: 0.5)
+        XCTAssertEqual(simulatedFrameOrigin.y, 432, accuracy: 0.5)
+    }
+
+    func testDragAnchorRefreshSkipsFractionalRoundingButRefreshesAtClamp() {
+        let size = NSSize(width: 90, height: 48)
+        XCTAssertFalse(
+            ShelfPanelController.shouldRefreshDragAnchor(
+                proposedOrigin: NSPoint(x: 100.4, y: 200.6),
+                clampedOrigin: NSPoint(x: 100.4, y: 200.6),
+                oldPanelSize: size,
+                targetPanelSize: size
+            )
+        )
+        XCTAssertTrue(
+            ShelfPanelController.shouldRefreshDragAnchor(
+                proposedOrigin: NSPoint(x: -2, y: 200),
+                clampedOrigin: NSPoint(x: 0, y: 200),
+                oldPanelSize: size,
+                targetPanelSize: size
+            )
+        )
+        XCTAssertTrue(
+            ShelfPanelController.shouldRefreshDragAnchor(
+                proposedOrigin: NSPoint(x: 100.4, y: 200.6),
+                clampedOrigin: NSPoint(x: 100.4, y: 200.6),
+                oldPanelSize: size,
+                targetPanelSize: NSSize(width: 90, height: 240)
+            )
+        )
+    }
+
+    func testDraggingExpandedPanelAcrossShorterDisplayResizesAndCollapsesToHeader() throws {
+        let store = try ShelfSessionStore(parentDirectory: scratch)
+        defer { store.shutdown() }
+        let inventory = ShelfInventory()
+        let controller = ShelfPanelController(inventory: inventory, sessionStore: store)
+
+        for index in 0..<20 {
+            let id = try XCTUnwrap(inventory.reservePending())
+            let data = Data(repeating: UInt8(index), count: 128)
+            let payload = ShelfMediaPayload(
+                id: id,
+                kind: .image,
+                sessionStoreURL: URL(fileURLWithPath: "/tmp/\(id.uuidString).png"),
+                originalFilename: "\(id.uuidString).png",
+                capturedAt: Date(),
+                sizeBytes: data.count,
+                dimensions: .init(width: 100, height: 100),
+                fingerprint: .compute(from: data),
+                utiIdentifier: "public.png"
+            )
+            XCTAssertTrue(inventory.resolve(id: id, with: payload))
+        }
+
+        controller.showAtDefaultPosition()
+        controller.expand(animated: false, makeKey: false)
+
+        let shorterScreen = NSRect(x: 0, y: 0, width: 800, height: 400)
+        let draggedOrigin = NSPoint(x: 300, y: 100)
+        let expectedSize = controller.panelSizeForDrag(screenFrame: shorterScreen)
+        controller.handleSlotDragMoved(
+            to: draggedOrigin,
+            screenFrame: shorterScreen,
+            targetSize: expectedSize
+        )
+
+        XCTAssertEqual(controller.panel.frame.origin, draggedOrigin)
+        XCTAssertEqual(controller.panel.frame.size, expectedSize)
+
+        XCTAssertTrue(shorterScreen.contains(controller.panel.frame))
+
+        let chipWidth = controller.minimizedFrame.width
+        let expectedChipX = [draggedOrigin.x, draggedOrigin.x + expectedSize.width - chipWidth]
+        let expectedChipY = draggedOrigin.y + expectedSize.height - controller.minimizedFrame.height
+
+        controller.collapse(animated: false)
+        XCTAssertTrue(expectedChipX.contains(controller.panel.frame.minX))
+        XCTAssertEqual(controller.panel.frame.minY, expectedChipY)
+        XCTAssertEqual(controller.panel.frame.height, 48)
+    }
+
 
     func testMinimizedChipUsesGenericDropLabelDuringHover() {
         XCTAssertEqual(

@@ -30,17 +30,20 @@ public final class ShelfPanelController: NSObject {
     /// drop event fires, so synchronous delete races and produces
     /// `FileReader` `ProgressEvent` failures.
     public static let consumeDeleteGrace: TimeInterval = 30
-    /// Keeps the floating panel fully visible while it is dragged.
+    /// Keeps a fitting panel fully visible while dragging; oversized panels
+    /// remain anchored to the visible top and right edges.
     static func clampedOrigin(
         _ origin: NSPoint,
         panelSize: NSSize,
         screenFrame: NSRect
     ) -> NSPoint {
-        let maximumX = max(screenFrame.minX, screenFrame.maxX - panelSize.width)
-        let maximumY = max(screenFrame.minY, screenFrame.maxY - panelSize.height)
+        let maximumX = screenFrame.maxX - panelSize.width
+        let minimumX = min(screenFrame.minX, maximumX)
+        let maximumY = screenFrame.maxY - panelSize.height
+        let minimumY = min(screenFrame.minY, maximumY)
         return NSPoint(
-            x: min(max(origin.x, screenFrame.minX), maximumX),
-            y: min(max(origin.y, screenFrame.minY), maximumY)
+            x: min(max(origin.x, minimumX), maximumX),
+            y: min(max(origin.y, minimumY), maximumY)
         )
     }
 
@@ -192,22 +195,41 @@ public final class ShelfPanelController: NSObject {
 
     public var isExpanded: Bool { mode != .minimized }
 
+    var isExpandedBelow: Bool { mode == .expandedBelow }
+
+    var minimizedFrame: NSRect {
+        NSRect(
+            origin: barOrigin,
+            size: NSSize(width: Self.minimizedWidth, height: Self.minimizedHeight)
+        )
+    }
+
     /// Height of the tray body (rows + footer). Header is not included here —
     /// in expanded mode the header sits either above or below this block.
-    private func computedBodyHeight() -> CGFloat {
+    private func computedBodyHeight(
+        screenFrame overrideScreenFrame: NSRect? = nil,
+        barOriginY overrideBarOriginY: CGFloat? = nil
+    ) -> CGFloat {
         let count = inventory.readyPayloads.count
         let rows: CGFloat
         if count == 0 {
-            rows = 120 // "EMPTY" label region — matches ShelfContainerView
+            rows = 120
         } else {
             let uncapped = CGFloat(count) * PixelDesign.Geometry.trayRowHeight
-            rows = min(uncapped, currentMaxTrayRowsHeight())
+            let screenHeight = overrideScreenFrame?.height
+                ?? panel.screen?.visibleFrame.height
+                ?? NSScreen.main?.visibleFrame.height
+                ?? 900
+            let cap = 0.6 * screenHeight - PixelDesign.Geometry.trayHeaderHeight - PixelDesign.Geometry.trayFooterHeight
+            rows = min(uncapped, max(60, cap))
         }
 
-        // Keep the minimized chip's origin stable. The body can scroll when
-        // the available space below the chip is smaller than the inventory.
-        let screenFrame = panel.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
-        let availableBelow = max(0, barOrigin.y - screenFrame.minY)
+        let screenFrame = overrideScreenFrame
+            ?? panel.screen?.visibleFrame
+            ?? NSScreen.main?.visibleFrame
+            ?? .zero
+        let barY = overrideBarOriginY ?? barOrigin.y
+        let availableBelow = max(0, barY - screenFrame.minY)
         let visibleRows = min(rows, max(0, availableBelow - PixelDesign.Geometry.trayFooterHeight))
         return visibleRows + PixelDesign.Geometry.trayFooterHeight
     }
@@ -344,27 +366,97 @@ public final class ShelfPanelController: NSObject {
     /// whether currently minimized or expanded. When expanded, reverses
     /// the expand math so `barOrigin` matches where the chip would sit if
     /// we collapsed right now.
-    func handleSlotDragMoved(to panelOrigin: NSPoint) {
-        if !isExpanded {
-            barOrigin = panelOrigin
-            return
+    func panelSizeForDrag(screenFrame: NSRect) -> NSSize {
+        guard isExpanded else {
+            return NSSize(width: Self.minimizedWidth, height: Self.minimizedHeight)
         }
-        let dx: CGFloat
-        switch expandedHorizontalAnchor {
-        case .trailing:
-            dx = PixelDesign.Geometry.trayWidth - Self.minimizedWidth
-        case .leading:
-            dx = 0
-        }
-        let dy: CGFloat
-        switch mode {
-        case .expandedBelow: dy = computedBodyHeight()
-        case .expandedAbove: dy = 0
-        case .minimized: dy = 0
-        }
-        barOrigin = NSPoint(x: panelOrigin.x + dx, y: panelOrigin.y + dy)
+        return NSSize(
+            width: PixelDesign.Geometry.trayWidth,
+            height: Self.minimizedHeight
+                + computedBodyHeight(screenFrame: screenFrame, barOriginY: screenFrame.maxY)
+        )
     }
 
+    static func dragAnchorYAdjustment(
+        oldHeight: CGFloat,
+        targetHeight: CGFloat,
+        anchorsTopEdge: Bool
+    ) -> CGFloat {
+        anchorsTopEdge ? oldHeight - targetHeight : 0
+    }
+
+    static func projectedDragOrigin(
+        mouseGlobal: NSPoint,
+        localAnchor: NSPoint,
+        oldPanelSize: NSSize,
+        targetPanelSize: NSSize,
+        screenFrame: NSRect,
+        anchorsTopEdge: Bool
+    ) -> NSPoint {
+        let adjustment = dragAnchorYAdjustment(
+            oldHeight: oldPanelSize.height,
+            targetHeight: targetPanelSize.height,
+            anchorsTopEdge: anchorsTopEdge
+        )
+        let proposedOrigin = NSPoint(
+            x: mouseGlobal.x - localAnchor.x,
+            y: mouseGlobal.y - (localAnchor.y - adjustment)
+        )
+        return clampedOrigin(proposedOrigin, panelSize: targetPanelSize, screenFrame: screenFrame)
+    }
+
+    static func shouldRefreshDragAnchor(
+        proposedOrigin: NSPoint,
+        clampedOrigin: NSPoint,
+        oldPanelSize: NSSize,
+        targetPanelSize: NSSize
+    ) -> Bool {
+        clampedOrigin != proposedOrigin
+            || abs(oldPanelSize.width - targetPanelSize.width) > 0.5
+            || abs(oldPanelSize.height - targetPanelSize.height) > 0.5
+    }
+
+    func dragAnchorYAdjustment(for targetSize: NSSize) -> CGFloat {
+        Self.dragAnchorYAdjustment(
+            oldHeight: panel.frame.height,
+            targetHeight: targetSize.height,
+            anchorsTopEdge: mode == .expandedBelow
+        )
+    }
+
+    func handleSlotDragMoved(
+        to panelOrigin: NSPoint,
+        screenFrame: NSRect,
+        targetSize: NSSize
+    ) {
+        let chipSize = NSSize(width: Self.minimizedWidth, height: Self.minimizedHeight)
+        if !isExpanded {
+            barOrigin = Self.clampedOrigin(panelOrigin, panelSize: chipSize, screenFrame: screenFrame)
+            return
+        }
+
+        let dx: CGFloat
+        switch expandedHorizontalAnchor {
+        case .trailing: dx = PixelDesign.Geometry.trayWidth - Self.minimizedWidth
+        case .leading: dx = 0
+        }
+        let resizedBodyHeight = max(0, targetSize.height - Self.minimizedHeight)
+        let sizeChanged = abs(panel.frame.width - targetSize.width) > 0.5
+            || abs(panel.frame.height - targetSize.height) > 0.5
+
+        let candidateDy: CGFloat
+        switch mode {
+        case .expandedBelow: candidateDy = resizedBodyHeight
+        case .expandedAbove, .minimized: candidateDy = 0
+        }
+        let candidate = NSPoint(x: panelOrigin.x + dx, y: panelOrigin.y + candidateDy)
+        barOrigin = Self.clampedOrigin(candidate, panelSize: chipSize, screenFrame: screenFrame)
+
+        guard sizeChanged else { return }
+        // Preserve the pointer's local position while resizing across displays.
+        setPanelFrame(NSRect(origin: panelOrigin, size: targetSize), animated: false)
+        renderContainer()
+    }
     func handleSlotRightClick(at point: NSPoint) {
         if isExpanded { collapse() }
         let menu = NSMenu()
@@ -674,21 +766,42 @@ final class ShelfHostingView: NSHostingView<ShelfContainerView> {
         }
         if didExceedThreshold {
             let mouseGlobal = NSEvent.mouseLocation
-            let proposedOrigin = NSPoint(
-                x: mouseGlobal.x - start.x,
-                y: mouseGlobal.y - start.y
-            )
             let screenFrame = NSScreen.screens.first { $0.frame.contains(mouseGlobal) }?.visibleFrame
                 ?? window.screen?.visibleFrame
                 ?? NSScreen.main?.visibleFrame
-                ?? NSRect(origin: proposedOrigin, size: window.frame.size)
+                ?? NSRect(origin: window.frame.origin, size: window.frame.size)
+            let targetSize = controller?.panelSizeForDrag(screenFrame: screenFrame)
+                ?? window.frame.size
+            let anchorsTopEdge = controller?.isExpandedBelow ?? false
+            let anchorAdjustment = ShelfPanelController.dragAnchorYAdjustment(
+                oldHeight: window.frame.height,
+                targetHeight: targetSize.height,
+                anchorsTopEdge: anchorsTopEdge
+            )
+            let proposedOrigin = NSPoint(
+                x: mouseGlobal.x - start.x,
+                y: mouseGlobal.y - (start.y - anchorAdjustment)
+            )
             let newOrigin = ShelfPanelController.clampedOrigin(
                 proposedOrigin,
-                panelSize: window.frame.size,
+                panelSize: targetSize,
                 screenFrame: screenFrame
             )
+            let needsAnchorRefresh = ShelfPanelController.shouldRefreshDragAnchor(
+                proposedOrigin: proposedOrigin,
+                clampedOrigin: newOrigin,
+                oldPanelSize: window.frame.size,
+                targetPanelSize: targetSize
+            )
             window.setFrameOrigin(newOrigin)
-            controller?.handleSlotDragMoved(to: newOrigin)
+            controller?.handleSlotDragMoved(
+                to: newOrigin,
+                screenFrame: screenFrame,
+                targetSize: targetSize
+            )
+            if needsAnchorRefresh {
+                mouseDownPoint = window.convertPoint(fromScreen: mouseGlobal)
+            }
         }
     }
 
