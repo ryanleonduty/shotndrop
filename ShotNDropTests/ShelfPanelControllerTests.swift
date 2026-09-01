@@ -106,6 +106,7 @@ final class ShelfPanelControllerTests: XCTestCase {
         controller.showAtDefaultPosition()
         controller.expand()
         XCTAssertTrue(controller.isExpanded)
+        XCTAssertTrue(controller.panel.isKeyWindow)
 
         let event = try XCTUnwrap(NSEvent.keyEvent(
             with: .keyDown,
@@ -120,8 +121,8 @@ final class ShelfPanelControllerTests: XCTestCase {
             keyCode: 53
         ))
         controller.panel.keyDown(with: event)
-
         XCTAssertFalse(controller.isExpanded)
+        XCTAssertFalse(controller.panel.isKeyWindow)
     }
 
     func testSlotClickTogglesExpanded() throws {

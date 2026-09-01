@@ -275,6 +275,7 @@ public final class ShelfPanelController: NSObject {
     /// Collapse back to the minimized header bar.
     public func collapse(animated: Bool = true) {
         guard isExpanded else { return }
+        let shouldResignKey = panel.isKeyWindow
         mode = .minimized
         autoExpandedFromHover = false
         removeOutsideClickMonitor()
@@ -282,6 +283,9 @@ public final class ShelfPanelController: NSObject {
                               size: NSSize(width: Self.minimizedWidth, height: Self.minimizedHeight))
         setPanelFrame(newFrame, animated: animated)
         renderContainer()
+        if shouldResignKey {
+            panel.resignKey()
+        }
     }
 
     private func setPanelFrame(_ newFrame: NSRect, animated: Bool) {
