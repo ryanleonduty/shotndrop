@@ -69,16 +69,17 @@ struct ShelfTrayHeaderView: View {
     }
 
     private var background: some View {
-        Group {
+        ZStack {
+            PixelDesign.Palette.midnight
             switch slotState {
             case .dropSuccess:
-                PixelDesign.Palette.gold.opacity(0.20)
+                Rectangle().fill(PixelDesign.Palette.gold.opacity(0.20))
             case .rejection:
-                PixelDesign.Palette.danger.opacity(0.20)
+                Rectangle().fill(PixelDesign.Palette.danger.opacity(0.10))
             case .dragHover:
-                PixelDesign.Palette.cyan.opacity(0.10)
+                Rectangle().fill(PixelDesign.Palette.cyan.opacity(0.10))
             default:
-                PixelDesign.Palette.midnight
+                EmptyView()
             }
         }
     }

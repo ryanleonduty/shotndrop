@@ -51,7 +51,7 @@ struct ShelfSlotView: View {
             } else if case .dropSuccess = state {
                 Rectangle().fill(PixelDesign.Palette.gold.opacity(0.28))
             } else if case .rejection = state {
-                Rectangle().fill(PixelDesign.Palette.danger.opacity(0.22))
+                Rectangle().fill(PixelDesign.Palette.danger.opacity(0.10))
             } else if case .dragHover = state {
                 scanlineOverlay(opacity: 0.10)
             } else if case .pending = state {
