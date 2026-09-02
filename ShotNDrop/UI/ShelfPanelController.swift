@@ -144,6 +144,22 @@ public final class ShelfPanelController: NSObject {
         renderContainer()
     }
 
+    /// Hides the shelf without clearing its session or inventory.
+    public func hide() {
+        guard panel.isVisible else { return }
+        if isExpanded {
+            collapse(animated: false)
+        }
+        panel.orderOut(nil)
+    }
+
+    /// Shows the shelf at its last position without resetting its layout.
+    public func show() {
+        guard !panel.isVisible else { return }
+        panel.orderFrontRegardless()
+        renderContainer()
+    }
+
     // MARK: Rendering
 
     private func computeIdleState() -> ShelfSlotView.State {

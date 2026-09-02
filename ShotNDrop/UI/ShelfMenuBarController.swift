@@ -1,7 +1,7 @@
 import AppKit
 import Combine
-/// Owns the menu-bar `NSStatusItem` and its three-item menu:
-/// `CLEAR`, `CHECK FOR UPDATES`, `QUIT`. Clicking the status icon toggles the tray.
+/// Owns the menu-bar `NSStatusItem` and its four-item menu:
+/// `HIDE/SHOW`, `CLEAR`, `CHECK FOR UPDATES`, `QUIT`. Clicking the status icon toggles the tray.
 @MainActor
 public final class ShelfMenuBarController: NSObject {
     private let statusItem: NSStatusItem
@@ -78,8 +78,12 @@ public final class ShelfMenuBarController: NSObject {
         if event?.type == .rightMouseUp {
             presentMenu()
         } else {
-            // Left click toggles the expanded inventory.
             guard let panelController else { return }
+            if !panelController.panel.isVisible {
+                panelController.show()
+                return
+            }
+            // Left click toggles the expanded inventory.
             if panelController.isExpanded {
                 panelController.collapse()
             } else {
@@ -90,12 +94,24 @@ public final class ShelfMenuBarController: NSObject {
 
     private func presentMenu() {
         let menu = NSMenu()
+        let visibilityTitle = panelController?.panel.isVisible == true ? "Hide" : "Show"
+        let visibility = NSMenuItem(
+            title: visibilityTitle,
+            action: #selector(toggleVisibility),
+            keyEquivalent: ""
+        )
+        visibility.image = NSImage(
+            systemSymbolName: visibilityTitle == "Hide" ? "eye.slash" : "eye",
+            accessibilityDescription: visibilityTitle
+        )
+        visibility.target = self
+        menu.addItem(visibility)
+
         let clear = NSMenuItem(title: "Clear", action: #selector(clear), keyEquivalent: "")
         clear.image = NSImage(systemSymbolName: "trash", accessibilityDescription: "Clear")
         clear.target = self
         clear.isEnabled = !(panelController?.inventory.isEmpty ?? true)
         menu.addItem(clear)
-
         let checkForUpdates = NSMenuItem(
             title: "Check for Updates",
             action: #selector(checkForUpdates),
@@ -128,10 +144,22 @@ public final class ShelfMenuBarController: NSObject {
         panelController?.renderSlot()
     }
 
+    @objc private func toggleVisibility() {
+        guard let panelController else { return }
+        if panelController.panel.isVisible {
+            panelController.hide()
+        } else {
+            panelController.show()
+        }
+    }
+
     @objc private func quit() {
         NSApp.terminate(nil)
     }
 
     // Introspection hooks used by tests.
-    public var menuTitles: [String] { ["Clear", "Check for Updates", "Quit"] }
+    public var menuTitles: [String] {
+        let visibilityTitle = panelController?.panel.isVisible == true ? "Hide" : "Show"
+        return [visibilityTitle, "Clear", "Check for Updates", "Quit"]
+    }
 }
