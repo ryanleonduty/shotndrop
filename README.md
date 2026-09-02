@@ -51,7 +51,7 @@ Requires Xcode 15+.
 1. Launch. A chip appears near your menu bar.
 2. Drop a file in; the chip expands into a tray showing what you’ve stashed.
 3. Drag any item back out into another app.
-4. Menu bar icon → **Hide/Show**, **Clear**, **Check for Updates**, or **Quit**. Use **Hide/Show** to temporarily remove or restore the chip without quitting.
+4. Left- or right-click the menu bar icon to open the same menu: **Hide/Show**, **Clear**, **Check for Updates**, or **Quit**. Use **Hide/Show** to temporarily remove or restore the chip without quitting.
 
 ## FAQ
 

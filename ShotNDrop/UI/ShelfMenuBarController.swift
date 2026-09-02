@@ -1,7 +1,7 @@
 import AppKit
 import Combine
 /// Owns the menu-bar `NSStatusItem` and its four-item menu:
-/// `HIDE/SHOW`, `CLEAR`, `CHECK FOR UPDATES`, `QUIT`. Clicking the status icon toggles the tray.
+/// `HIDE/SHOW`, `CLEAR`, `CHECK FOR UPDATES`, `QUIT`. Clicking the status icon shows the menu.
 @MainActor
 public final class ShelfMenuBarController: NSObject {
     private let statusItem: NSStatusItem
@@ -74,22 +74,7 @@ public final class ShelfMenuBarController: NSObject {
     }
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
-        let event = NSApp.currentEvent
-        if event?.type == .rightMouseUp {
-            presentMenu()
-        } else {
-            guard let panelController else { return }
-            if !panelController.panel.isVisible {
-                panelController.show()
-                return
-            }
-            // Left click toggles the expanded inventory.
-            if panelController.isExpanded {
-                panelController.collapse()
-            } else {
-                panelController.expand()
-            }
-        }
+        presentMenu()
     }
 
     private func presentMenu() {
