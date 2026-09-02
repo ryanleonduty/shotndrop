@@ -36,12 +36,31 @@ struct ShelfChipView: View {
         }
         .frame(width: PixelDesign.Geometry.chipWidth,
                height: PixelDesign.Geometry.chipHeight)
+        .overlay {
+            Rectangle()
+                .strokeBorder(PixelDesign.Palette.void, lineWidth: PixelDesign.Geometry.slotBorderWidth + 2)
+        }
+        .overlay {
+            Rectangle()
+                .inset(by: PixelDesign.Geometry.slotBorderWidth)
+                .strokeBorder(borderColor, lineWidth: PixelDesign.Geometry.slotBorderWidth)
+        }
         .overlay(
             CornerBracketsView(style: bracketStyle, ambientPulse: shouldAmbientPulse)
                 .environmentObject(reducedMotion)
         )
         .animation(.easeInOut(duration: 0.35), value: slotState)
         .animation(.easeInOut(duration: 0.20), value: count)
+    }
+
+    private var borderColor: Color {
+        switch slotState {
+        case .idleEmpty, .idleHolding, .dragHover:
+            return PixelDesign.Palette.cyan
+        case .dropSuccess: return PixelDesign.Palette.gold
+        case .rejection: return PixelDesign.Palette.danger
+        default: return PixelDesign.Palette.cyanDim
+        }
     }
 
     static func stateLabel(for state: ShelfSlotView.State) -> String? {
