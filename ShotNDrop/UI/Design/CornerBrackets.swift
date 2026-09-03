@@ -18,10 +18,9 @@ struct CornerBracketsView: View {
     @EnvironmentObject private var reducedMotion: PixelDesign.ReducedMotion
 
     var body: some View {
-        TimelineView(.animation) { context in
-            let phase = pulsePhase(at: context.date)
-            drawCanvas(pulsePhase: phase)
-        }
+        // Avoid TimelineView's animation driver on macOS 26, where it can
+        // outlive the hosting view during window activation and crash.
+        drawCanvas(pulsePhase: 1.0)
     }
 
     /// 4-step opacity ramp over `PixelDesign.Motion.ambientPulsePeriod`.
