@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>ShotNDrop</title>
+        <item>
+            <title>0.1.5</title>
+            <pubDate>Thu, 03 Sep 2026 16:31:26 +0700</pubDate>
+            <sparkle:version>6</sparkle:version>
+            <sparkle:shortVersionString>0.1.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://ryanleonduty.github.io/shotndrop/ShotNDrop-0.1.5.dmg" length="1777855" type="application/octet-stream" sparkle:edSignature="hZ7vJxKKK0Vz28+uQemPGV7LqIjeDehhG5Zj5KuU6W/ndstaTHe5jxG7SSSKjWEdt883MAegi4fcaxWcdwk7DA=="/>
+        </item>
+    </channel>
+</rss>
