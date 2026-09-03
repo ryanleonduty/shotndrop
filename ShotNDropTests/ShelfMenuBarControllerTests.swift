@@ -22,4 +22,23 @@ final class ShelfMenuBarControllerTests: XCTestCase {
         panel.hide()
         XCTAssertEqual(menu.menuTitles.first, "Show")
 }
+    func testClearAndToggleActionsDispatchThroughObjectiveCEntryPoints() throws {
+        let scratch = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent("menubar-action-tests-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: scratch) }
+
+        let store = try ShelfSessionStore(parentDirectory: scratch)
+        defer { store.shutdown() }
+        let panel = ShelfPanelController(inventory: ShelfInventory(), sessionStore: store)
+        let menuBar = ShelfMenuBarController(panelController: panel)
+
+        XCTAssertTrue(NSApp.sendAction(Selector("clear"), to: menuBar, from: nil))
+
+        XCTAssertTrue(NSApp.sendAction(Selector("toggleVisibility"), to: menuBar, from: nil))
+        XCTAssertTrue(panel.panel.isVisible)
+
+        XCTAssertTrue(NSApp.sendAction(Selector("toggleVisibility"), to: menuBar, from: nil))
+        XCTAssertFalse(panel.panel.isVisible)
+    }
 }
