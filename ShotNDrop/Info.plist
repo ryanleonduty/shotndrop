@@ -10,5 +10,8 @@
 	<true/>
 	<key>SUAllowsAutomaticUpdates</key>
 	<false/>
+	<!-- Required for Sparkle to install updates from within the sandbox. -->
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
 </dict>
 </plist>
