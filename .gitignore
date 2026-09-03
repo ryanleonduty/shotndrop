@@ -18,8 +18,9 @@ xcuserdata/
 ## Swift Package Manager
 .build/
 Packages/
-Package.resolved
 .swiftpm/
+# Package.resolved is intentionally tracked to pin exact dependency versions
+# for reproducible, reviewable builds (this is an app, not a library).
 
 ## Signing / distribution artifacts
 *.p12
