@@ -21,6 +21,7 @@ final class ShotNDropAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         PixelDesign.Font.registerAll()
+        updateCoordinator.startUpdater()
 
         do {
             let store = try ShelfSessionStore()

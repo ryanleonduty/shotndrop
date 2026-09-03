@@ -53,7 +53,23 @@ hdiutil create \
     -format UDZO \
     "$DMG" >/dev/null
 
+echo "==> Generating Sparkle appcast"
+# generate_appcast signs each archive in $DIST with the EdDSA private key from
+# the login Keychain and writes/updates appcast.xml. The download-url-prefix
+# must match where the DMGs are actually served (see docs/distribution.md).
+DOWNLOAD_URL_PREFIX="${APPCAST_DOWNLOAD_URL_PREFIX:-https://ryanleonduty.github.io/shotndrop/}"
+SPARKLE_BIN="${SPARKLE_BIN:-$(find "$HOME/Library/Developer/Xcode/DerivedData" \
+    -path '*/artifacts/sparkle/Sparkle/bin/generate_appcast' 2>/dev/null | head -1)}"
+if [[ -z "$SPARKLE_BIN" || ! -x "$SPARKLE_BIN" ]]; then
+    echo "!! generate_appcast not found. Resolve packages (open the project in Xcode" >&2
+    echo "   or run 'xcodebuild -resolvePackageDependencies') or set SPARKLE_BIN." >&2
+    exit 1
+fi
+"$SPARKLE_BIN" "$DIST" --download-url-prefix "$DOWNLOAD_URL_PREFIX"
+
 echo "==> Done"
-echo "    App:  $APP_SRC"
-echo "    DMG:  $DMG"
-du -h "$DMG" | awk '{print "    Size:", $1}'
+echo "    App:     $APP_SRC"
+echo "    DMG:     $DMG"
+du -h "$DMG" | awk '{print "    Size:   ", $1}'
+echo "    Appcast: $DIST/appcast.xml"
+echo "    Publish the DMG and appcast.xml at: $DOWNLOAD_URL_PREFIX"
