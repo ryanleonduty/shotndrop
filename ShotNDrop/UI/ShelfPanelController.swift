@@ -501,7 +501,7 @@ public final class ShelfPanelController: NSObject {
     }
 
     @objc private func checkForUpdates() {
-        updateCoordinator.checkForUpdates(from: panel)
+        updateCoordinator.checkForUpdates()
     }
 
     @objc private func clearInventory() {
@@ -748,8 +748,8 @@ public final class ShelfPanelController: NSObject {
 /// Panel subclass that accepts becoming key even though it is non-activating.
 public final class ShelfPanel: NSPanel {
     weak var controller: ShelfPanelController?
-    public override var canBecomeKey: Bool { true }
-    public override var canBecomeMain: Bool { false }
+    public nonisolated override var canBecomeKey: Bool { true }
+    public nonisolated override var canBecomeMain: Bool { false }
 
     public override func keyDown(with event: NSEvent) {
         if event.keyCode == 53 {

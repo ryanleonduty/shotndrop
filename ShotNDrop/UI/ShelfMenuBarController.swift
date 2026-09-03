@@ -8,6 +8,11 @@ public final class ShelfMenuBarController: NSObject {
     private weak var panelController: ShelfPanelController?
     private let updateCoordinator: UpdateCoordinator
     private var inventoryObservation: AnyCancellable?
+    /// Guards against re-entering menu presentation while `performClick` is
+    /// pumping its nested menu-tracking run loop; a second rapid click would
+    /// otherwise reassign `statusItem.menu` out from under the live tracking
+    /// session and crash AppKit.
+    private var isPresentingMenu = false
 
     public init(
         panelController: ShelfPanelController,
@@ -73,11 +78,17 @@ public final class ShelfMenuBarController: NSObject {
         return image
     }
 
+    // AppKit invokes target-action on the main thread; call synchronously so
+    // the click and its menu tracking stay on one run-loop turn.
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         presentMenu()
     }
 
     private func presentMenu() {
+        guard !isPresentingMenu else { return }
+        isPresentingMenu = true
+        defer { isPresentingMenu = false }
+
         let menu = NSMenu()
         let visibilityTitle = panelController?.panel.isVisible == true ? "Hide" : "Show"
         let visibility = NSMenuItem(
@@ -118,9 +129,8 @@ public final class ShelfMenuBarController: NSObject {
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
     }
-
     @objc private func checkForUpdates() {
-        updateCoordinator.checkForUpdates(from: panelController?.panel)
+        updateCoordinator.checkForUpdates()
     }
 
     @objc private func clear() {
