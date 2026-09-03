@@ -87,9 +87,45 @@ struct ShelfContainerView: View {
                     }
                 }
                 .animation(.easeInOut(duration: 0.22), value: payloads.map(\.id))
+                .background {
+                    PixelScrollViewConfigurator()
+                }
             }
             .frame(maxHeight: maxTrayHeight)
             .background(PixelDesign.Palette.midnight)
         }
+    }
+}
+
+private struct PixelScrollViewConfigurator: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        NSView()
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        DispatchQueue.main.async {
+            var ancestor: NSView? = nsView
+            while let view = ancestor {
+                if let scrollView = view as? NSScrollView {
+                    guard !(scrollView.verticalScroller is PixelScroller) else { return }
+                    let scroller = PixelScroller()
+                    scroller.scrollerStyle = .overlay
+                    scrollView.verticalScroller = scroller
+                    return
+                }
+                ancestor = view.superview
+            }
+        }
+    }
+}
+
+private final class PixelScroller: NSScroller {
+    override func drawKnob() {
+        let knobRect = rect(for: .knob)
+        guard !knobRect.isEmpty else { return }
+        NSColor(PixelDesign.Palette.cyan)
+            .withAlphaComponent(0.92)
+            .setFill()
+        NSBezierPath(rect: knobRect).fill()
     }
 }
