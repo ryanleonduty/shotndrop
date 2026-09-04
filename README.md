@@ -1,9 +1,9 @@
 # ShotNDrop
 
-A small macOS menu bar shelf for the files you're about to drag somewhere else. Everything you drop into it disappears when you quit.
+A tiny macOS menu bar shelf for the files you're about to drag somewhere else. Drop things in, drag them out, and it all clears when you quit.
 
 <p align="center">
-  <a href="https://github.com/ryanleonduty/shotndrop/releases/latest"><strong>↓ Download latest release</strong></a> · macOS 14+ · Free & MIT · Signed & notarized
+  <a href="https://github.com/ryanleonduty/shotndrop/releases/latest"><strong>↓ Download</strong></a> · macOS 14+ · Free & MIT
 </p>
 
 <p align="center">
@@ -12,35 +12,33 @@ A small macOS menu bar shelf for the files you're about to drag somewhere else. 
 
 ---
 
-## Why it exists
+## Why
 
-Most of the files I take screenshots of, or briefly download to attach somewhere, end up on my Desktop and stay there. ShotNDrop is a chip that lives near the menu bar. Drop files in, drag them out into whatever app needs them, quit when you're done. The shelf empties on quit, and nothing lands on your Desktop.
+Screenshots and quick downloads pile up on the Desktop and stay there. ShotNDrop is a small chip by the menu bar: drop files in, drag them out into whatever app needs them, quit when you're done. Nothing lands on your Desktop, and the shelf empties on quit.
 
-## What's in the app
+## Features
 
-- Drop target that accepts anything you can drag: screenshots, images, PDFs, arbitrary files.
-- Drag source that works in Slack, Figma, Notion, Mail, Discord, browsers, and most apps that accept file drops.
-- Menu bar only, no Dock icon. A pixel chip when idle; a vertical tray when expanded.
-- Session-only storage. Quit ends the session and clears the shelf.
-- Built-in updates: checks automatically in the background and from the menu, then downloads, installs, and relaunches in place — no reinstalling.
+- Drop in anything draggable — screenshots, images, PDFs, any file.
+- Drag out into Slack, Figma, Notion, Mail, Discord, browsers, and most apps.
+- Lives in the menu bar, no Dock icon — a pixel chip when idle, a tray when expanded.
+- Session-only: quit clears the shelf. It's a shelf, not storage.
+- Updates itself — checks in the background and from the menu.
 
 ## Install
 
-1. [Download the latest release](https://github.com/ryanleonduty/shotndrop/releases/latest) and grab the `.dmg`.
-2. Drag ShotNDrop.app into `/Applications`.
-3. Double-click to launch. The build is signed with a Developer ID and notarized by Apple, so it opens normally — no right-click or "unidentified developer" step.
-4. Look near the menu bar for the pixel chip.
+1. [Download the latest `.dmg`](https://github.com/ryanleonduty/shotndrop/releases/latest).
+2. Drag ShotNDrop into your Applications folder.
+3. Launch it and look for the pixel chip near the menu bar.
 
-Requires macOS 14 (Sonoma) or newer.
+Requires macOS 14 (Sonoma) or later.
 
 <details>
-<summary>Or build from source</summary>
+<summary>Build from source</summary>
 
 ```bash
 git clone https://github.com/ryanleonduty/shotndrop.git
 cd shotndrop
-open ShotNDrop.xcodeproj
-# ⌘R to run
+open ShotNDrop.xcodeproj   # ⌘R to run
 ```
 
 Requires Xcode 16+.
@@ -48,26 +46,17 @@ Requires Xcode 16+.
 
 ## Using it
 
-1. Launch. A chip appears near your menu bar.
-2. Drop a file in; the chip expands into a tray showing what you’ve stashed.
-3. Drag any item back out into another app.
-4. Left- or right-click the menu bar icon to open the same menu: **Hide/Show**, **Clear**, **Check for Updates**, or **Quit**. Use **Hide/Show** to temporarily remove or restore the chip without quitting.
-
-## Updates
-
-ShotNDrop updates itself. It checks in the background and via **Check for Updates**, and when a new version is available it downloads, verifies, installs, and relaunches — you just confirm. Updates are cryptographically signed (EdDSA) and delivered over HTTPS.
+- Drop a file on the chip; it expands into a tray of what you've stashed.
+- Drag any item back out into another app.
+- Click the menu bar icon (left or right) for **Hide/Show**, **Clear**, **Check for Updates**, and **Quit**.
 
 ## FAQ
 
-**Will I lose files on the shelf when I quit?** Yes. ShotNDrop is a shelf, not storage. Save anything you want to keep before quitting.
+**Do I lose the shelf when I quit?** Yes — it's a shelf, not storage. Save anything you want to keep first.
 
-**Is it free?** Yes. MIT-licensed, open source, distributed only through GitHub. No accounts, telemetry, or cloud.
+**Is it free?** Yes: MIT-licensed and open source, with no accounts, telemetry, or cloud.
 
-**Is it safe to open?** Yes — it's signed with a Developer ID and notarized by Apple, and runs in the macOS App Sandbox. It never asks for Full Disk Access or Screen Recording.
-
-**Does my screenshot tool work with it?** If the tool produces a file on disk or a draggable image, it should work.
-
-**Will it clutter my menu bar?** One icon.
+**Does my screenshot tool work with it?** If it produces a file or a draggable image, yes.
 
 ## Contributing
 
