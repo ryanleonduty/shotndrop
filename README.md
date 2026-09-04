@@ -20,15 +20,16 @@ Screenshots and quick downloads pile up on the Desktop and stay there. ShotNDrop
 
 - Drop in anything draggable — screenshots, images, PDFs, any file.
 - Drag out into Slack, Figma, Notion, Mail, Discord, browsers, and most apps.
-- Lives in the menu bar, no Dock icon — a pixel chip when idle, a tray when expanded.
+- A small floating pixel chip lives on screen — collapsed when idle, expanding into a tray when you drop something in. Drag it wherever suits you.
+- No Dock icon; a little tray icon in the menu bar holds the controls.
 - Session-only: quit clears the shelf. It's a shelf, not storage.
-- Updates itself — checks in the background and from the menu.
+- Checks for updates in the background, or on demand from the menu.
 
 ## Install
 
 1. [Download the latest `.dmg`](https://github.com/ryanleonduty/shotndrop/releases/latest).
 2. Drag ShotNDrop into your Applications folder.
-3. Launch it and look for the pixel chip near the menu bar.
+3. Launch it — a little pixel chip appears at the right edge of your screen. Drag it wherever you like.
 
 Requires macOS 14 (Sonoma) or later.
 
@@ -38,10 +39,10 @@ Requires macOS 14 (Sonoma) or later.
 ```bash
 git clone https://github.com/ryanleonduty/shotndrop.git
 cd shotndrop
-open ShotNDrop.xcodeproj   # ⌘R to run
+open ShotNDrop.xcodeproj
 ```
 
-Requires Xcode 16+.
+Xcode pulls the one dependency (Sparkle) on its own — press ⌘R to build and run. Needs Xcode 16 or later.
 </details>
 
 ## Using it
