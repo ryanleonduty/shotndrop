@@ -3,13 +3,16 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 /// AppKit drag source that starts a real
-/// `beginDraggingSession(with:event:source:)` on mouseDown-plus-drag. The
-/// pasteboard writer is an `NSFilePromiseProvider` — macOS asks the
-/// destination for a writable directory it can reach (e.g. Figma's shared
-/// import scratch), invokes our fileNameForType + writePromise callbacks,
-/// and hands the resulting URL to the destination via
-/// `event.dataTransfer.files`. This is the only way to hand a real file
-/// across a sandbox boundary to a non-sandboxed destination like Figma.
+/// `beginDraggingSession(with:event:source:)` on mouseDown-plus-drag.
+///
+/// The app is sandboxed, so the session store lives inside the app's container
+/// (`~/Library/Containers/<bundle id>/Data/tmp/…`). That path is unreadable by
+/// other apps, so advertising only a file URL leaves a destination like Figma
+/// unable to validate the drop — it withholds the copy cursor and often rejects
+/// the drag. To hand image data across the sandbox boundary we put the bytes on
+/// the pasteboard *eagerly* (see `beginDrag`); a destination consumes them
+/// directly, independent of file-path readability. The file URL is still
+/// advertised for file-oriented destinations (e.g. Finder) that can reach it.
 final class ShelfRowDragView: NSView, NSDraggingSource {
     let payload: ShelfMediaPayload
     let onDragConsumed: () -> Void
@@ -105,28 +108,30 @@ final class ShelfRowDragView: NSView, NSDraggingSource {
     // MARK: Internals
 
     private func beginDrag(with event: NSEvent) {
-        // Eager pasteboard shape:
-        //   * `.fileURL`  → the on-disk session-store URL. Chromium/Electron
-        //     apps (Figma) only recognize eager file URLs for cross-app
-        //     drops.
-        //   * `payload.utiIdentifier`, `public.image` → raw bytes for
-        //     destinations that consume paste data directly.
-        //
-        // App-sandbox is OFF for this build; without that the session store
-        // lives under `/var/folders/*/T/…` which is globally readable to
-        // user-space apps, so the file URL actually resolves for Figma.
         let pbItem = NSPasteboardItem()
-        pbItem.setDataProvider(self, forTypes: [
-            NSPasteboard.PasteboardType(payload.utiIdentifier),
-            NSPasteboard.PasteboardType("public.image")
-        ])
+        let imageType = NSPasteboard.PasteboardType(payload.utiIdentifier)
+        let genericImageType = NSPasteboard.PasteboardType("public.image")
 
-        // Write the file URL eagerly so destinations see it in the initial
-        // pasteboard enumeration (which is what Chromium's drop cursor
-        // resolver uses).
+        // Eager image bytes: under the sandbox the session-store file is inside
+        // the app container and unreadable by the destination, so a lazily
+        // provided fileURL alone leaves Figma without a droppable payload. Put
+        // the raw bytes on the pasteboard up front for both the concrete UTI and
+        // the generic `public.image` so an image destination accepts them on the
+        // first drag. Fall back to lazy provision only if the eager read fails.
+        if let bytes = try? Data(contentsOf: payload.sessionStoreURL) {
+            pbItem.setData(bytes, forType: imageType)
+            pbItem.setData(bytes, forType: genericImageType)
+            Self.trace("beginDrag eager bytes=\(bytes.count) utis=[\(payload.utiIdentifier),public.image]")
+        } else {
+            pbItem.setDataProvider(self, forTypes: [imageType, genericImageType])
+            Self.trace("beginDrag eager read FAILED — lazy provider for \(payload.sessionStoreURL.path)")
+        }
+
+        // Keep advertising the file URL for file-oriented destinations (e.g.
+        // Finder) that can reach the path; cross-container destinations ignore
+        // it and use the eager bytes above.
         let urlString = payload.sessionStoreURL.absoluteString
         pbItem.setString(urlString, forType: .fileURL)
-        Self.trace("beginDrag advertised fileURL=\(urlString) utis=[\(payload.utiIdentifier),public.image]")
 
         let draggingItem = NSDraggingItem(pasteboardWriter: pbItem)
         let thumb = thumbnailImage() ?? NSImage(size: NSSize(width: 40, height: 40))
