@@ -532,31 +532,45 @@ public final class ShelfPanelController: NSObject {
 
         slotState = computeIdleState()
         if isExpanded {
-            let bodyHeight = computedBodyHeight()
-            let direction = mode
-            let width = Self.minimizedWidth
-            let height = Self.minimizedHeight + bodyHeight
-            let x = barOrigin.x
-            let y: CGFloat
-            switch direction {
-            case .expandedBelow: y = barOrigin.y - bodyHeight
-            case .expandedAbove: y = barOrigin.y
-            case .minimized: y = barOrigin.y
+            if inventory.isEmpty {
+                // Dragging out the last item empties the shelf — return to the
+                // chip instead of leaving an empty tray hanging.
+                collapse(animated: true)
+                return
             }
-            panel.setFrame(NSRect(x: x, y: y, width: width, height: height), display: true, animate: true)
+            // Re-resolve the expanded frame so the tray keeps its full width and
+            // simply shortens by the removed row. (The previous hand-rolled sizing
+            // used the chip width, producing a narrow, clipped sliver pinned to the
+            // screen edge.)
+            let bodyHeight = computedBodyHeight()
+            let (newFrame, direction) = resolveExpandedFrame(bodyHeight: bodyHeight)
+            mode = direction
+            setPanelFrame(newFrame, animated: true)
         }
         renderContainer()
     }
 
     // MARK: Drag-in
 
+    /// True when the drag originated from one of the shelf's own rows. Such a
+    /// drag must not be treated as a droppable target: re-ingesting would dedupe
+    /// as a duplicate, and reporting an accepted `.copy` back to the source would
+    /// consume the original — so dragging an item out and dropping it back onto
+    /// the shelf would silently delete it.
+    private func isSelfDrag(_ sender: NSDraggingInfo) -> Bool {
+        sender.draggingSource is ShelfRowDragView
+    }
+
     public func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        let ok = validator.canAccept(dragInfo: sender)
-        guard ok else { return [] }
-        // Cancel any pending collapse from a transient exit — the drag is
-        // back inside the panel.
+        // Any drag back inside the panel cancels a pending collapse from a
+        // transient exit — including a self-drag returning home, so the panel
+        // doesn't pull shut under an item being dropped back onto its shelf.
         pendingHoverCollapse?.cancel()
         pendingHoverCollapse = nil
+
+        // A self-drag (item dragged out of this shelf) is not droppable back
+        // here; return [] so it is neither re-ingested nor consumed.
+        guard validator.canAccept(dragInfo: sender), !isSelfDrag(sender) else { return [] }
 
         slotState = .dragHover(hadItems: !inventory.isEmpty)
         if !isExpanded {
@@ -606,6 +620,9 @@ public final class ShelfPanelController: NSObject {
         // A real drop preempts any pending exit-collapse.
         pendingHoverCollapse?.cancel()
         pendingHoverCollapse = nil
+        // Dropping an item back onto the shelf it came from is a no-op: return
+        // false so the drag ends with no operation and the source keeps it.
+        guard !isSelfDrag(sender) else { return false }
         guard validator.canAccept(dragInfo: sender) else { return false }
 
         let pasteboard = sender.draggingPasteboard
@@ -730,7 +747,15 @@ public final class ShelfPanelController: NSObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.flashDuration) { [weak self] in
             guard let self else { return }
             self.slotState = self.computeIdleState()
-            if wasAuto { self.collapse(animated: true) } else { self.renderContainer() }
+            // Collapse only if the auto-expanded tray is still open. If it was
+            // already dismissed before the flash ended, collapse() early-returns
+            // without repainting and the chip stays stuck on the drop-success
+            // accent — so repaint the idle chip explicitly instead.
+            if wasAuto && self.isExpanded {
+                self.collapse(animated: true)
+            } else {
+                self.renderContainer()
+            }
         }
     }
 
