@@ -3,7 +3,7 @@
 A small macOS menu bar shelf for the files you're about to drag somewhere else. Everything you drop into it disappears when you quit.
 
 <p align="center">
-  <a href="https://github.com/ryanleonduty/shotndrop/releases/latest"><strong>↓ Download latest release</strong></a> · macOS 14+ · Free & MIT · GitHub only
+  <a href="https://github.com/ryanleonduty/shotndrop/releases/latest"><strong>↓ Download latest release</strong></a> · macOS 14+ · Free & MIT · Signed & notarized
 </p>
 
 <p align="center">
@@ -22,13 +22,13 @@ Most of the files I take screenshots of, or briefly download to attach somewhere
 - Drag source that works in Slack, Figma, Notion, Mail, Discord, browsers, and most apps that accept file drops.
 - Menu bar only, no Dock icon. A pixel chip when idle; a vertical tray when expanded.
 - Session-only storage. Quit ends the session and clears the shelf.
-- Manual update check from either the menu bar or shelf context menu.
+- Built-in updates: checks automatically in the background and from the menu, then downloads, installs, and relaunches in place — no reinstalling.
 
 ## Install
 
 1. [Download the latest release](https://github.com/ryanleonduty/shotndrop/releases/latest) and grab the `.dmg`.
 2. Drag ShotNDrop.app into `/Applications`.
-3. First launch: right-click the app, choose **Open**, then **Open** again. macOS shows an unidentified developer warning because the build isn't signed with a paid Apple Developer ID. The source is in this repo if you'd like to read it first.
+3. Double-click to launch. The build is signed with a Developer ID and notarized by Apple, so it opens normally — no right-click or "unidentified developer" step.
 4. Look near the menu bar for the pixel chip.
 
 Requires macOS 14 (Sonoma) or newer.
@@ -43,7 +43,7 @@ open ShotNDrop.xcodeproj
 # ⌘R to run
 ```
 
-Requires Xcode 15+.
+Requires Xcode 16+.
 </details>
 
 ## Using it
@@ -53,13 +53,17 @@ Requires Xcode 15+.
 3. Drag any item back out into another app.
 4. Left- or right-click the menu bar icon to open the same menu: **Hide/Show**, **Clear**, **Check for Updates**, or **Quit**. Use **Hide/Show** to temporarily remove or restore the chip without quitting.
 
+## Updates
+
+ShotNDrop updates itself. It checks in the background and via **Check for Updates**, and when a new version is available it downloads, verifies, installs, and relaunches — you just confirm. Updates are cryptographically signed (EdDSA) and delivered over HTTPS.
+
 ## FAQ
 
 **Will I lose files on the shelf when I quit?** Yes. ShotNDrop is a shelf, not storage. Save anything you want to keep before quitting.
 
 **Is it free?** Yes. MIT-licensed, open source, distributed only through GitHub. No accounts, telemetry, or cloud.
 
-**Why the unidentified developer warning on first launch?** The build isn't signed with a paid Apple Developer ID. Right-click, choose **Open**, and macOS remembers the choice after that.
+**Is it safe to open?** Yes — it's signed with a Developer ID and notarized by Apple, and runs in the macOS App Sandbox. It never asks for Full Disk Access or Screen Recording.
 
 **Does my screenshot tool work with it?** If the tool produces a file on disk or a draggable image, it should work.
 
