@@ -141,9 +141,29 @@ if [[ -z "$SPARKLE_BIN" || ! -x "$SPARKLE_BIN" ]]; then
 fi
 "$SPARKLE_BIN" "$DIST" --download-url-prefix "$DOWNLOAD_URL_PREFIX"
 
+# --- GitHub Release -----------------------------------------------------------
+# Publish the notarized DMG as the "v<version>" release so /releases/latest (the
+# README download link) serves the current signed build. Set SKIP_GITHUB_RELEASE=1
+# to skip (e.g. a local test build). The Sparkle feed on gh-pages is still
+# published separately — see docs/distribution.md.
+if [[ "${SKIP_GITHUB_RELEASE:-0}" == "1" ]]; then
+    echo "==> Skipping GitHub Release (SKIP_GITHUB_RELEASE=1)"
+elif ! command -v gh >/dev/null 2>&1; then
+    echo "!! gh CLI not found — skipping GitHub Release. Install it or attach $DMG manually." >&2
+elif gh release view "v$VERSION" >/dev/null 2>&1; then
+    echo "==> Updating existing GitHub Release v$VERSION"
+    gh release upload "v$VERSION" "$DMG" --clobber
+else
+    echo "==> Creating GitHub Release v$VERSION"
+    gh release create "v$VERSION" "$DMG" \
+        --target "$(git rev-parse HEAD)" \
+        --title "ShotNDrop v$VERSION" \
+        --generate-notes
+fi
+
 echo "==> Done"
 echo "    App:     $APP (notarized + stapled)"
 echo "    DMG:     $DMG (signed + notarized + stapled)"
 du -h "$DMG" | awk '{print "    Size:   ", $1}'
 echo "    Appcast: $DIST/appcast.xml"
-echo "    Publish the DMG + appcast.xml at: $DOWNLOAD_URL_PREFIX"
+echo "    Publish the DMG + appcast.xml to the Sparkle feed at: $DOWNLOAD_URL_PREFIX"
