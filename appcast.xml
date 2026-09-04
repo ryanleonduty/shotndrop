@@ -3,12 +3,12 @@
     <channel>
         <title>ShotNDrop</title>
         <item>
-            <title>0.2.1</title>
-            <pubDate>Fri, 04 Sep 2026 17:20:11 +0700</pubDate>
-            <sparkle:version>9</sparkle:version>
-            <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+            <title>0.2.2</title>
+            <pubDate>Sat, 05 Sep 2026 03:29:45 +0700</pubDate>
+            <sparkle:version>10</sparkle:version>
+            <sparkle:shortVersionString>0.2.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://ryanleonduty.github.io/shotndrop/ShotNDrop-0.2.1.dmg" length="1874732" type="application/octet-stream" sparkle:edSignature="l5audx+ebLhHvskV2VLVDn67Jpe8Uxq268ntFU2wAQ1vVp7Ta5xAUVPA5JS8vK1ljZZ0D+AETxLYZ9xpI5u8Cg=="/>
+            <enclosure url="https://ryanleonduty.github.io/shotndrop/ShotNDrop-0.2.2.dmg" length="1875683" type="application/octet-stream" sparkle:edSignature="/5LeWo9XLKOCuOb1iIK9gDpJdBQCJmO5pwVbRAbmhgUeesfQuLHYcoMvY90Yp5I510WzX5eSF9wK6yXQ6Er3Dw=="/>
         </item>
     </channel>
 </rss>
