@@ -7,7 +7,7 @@ A tiny macOS menu bar shelf for the files you're about to drag somewhere else. D
 </p>
 
 <p align="center">
-  <img src="assets/shotndrop-demo.gif" alt="Capturing a design into the ShotNDrop shelf, then dragging it out into Figma" width="760">
+  <img src="assets/shotndrop-demo.gif" alt="Capturing a design into the ShotNDrop shelf, then dragging it out into Figma" width="900">
 </p>
 
 ---
